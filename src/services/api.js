@@ -44,16 +44,11 @@ async function obtenerMensajeError(respuesta, mensajePredeterminado) {
 
     return mensajePredeterminado;
   } catch {
-    try {
-      const texto = await respuesta.text();
-      return texto || mensajePredeterminado;
-    } catch {
-      return mensajePredeterminado;
-    }
+    return mensajePredeterminado;
   }
 }
 
-// Realizar solicitudes al backend
+// Funcion general para comunicarse con el backend
 async function solicitar(endpoint, opciones = {}) {
   let respuesta;
 
@@ -69,7 +64,7 @@ async function solicitar(endpoint, opciones = {}) {
     });
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new Error("No se pudo conectar con el servidor. Intenta nuevamente.");
+      throw new Error("No se pudo conectar con el servidor.");
     }
 
     throw error;
@@ -135,3 +130,18 @@ export async function crearRepartidor(datos) {
   });
 }
 
+// Asignar un pedido a un repartidor
+export async function asignarPedido(orderId, driverId) {
+  return solicitar(
+    `/orders/${encodeURIComponent(orderId)}/assign`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        driver_id: driverId
+      })
+    }
+  );
+}
