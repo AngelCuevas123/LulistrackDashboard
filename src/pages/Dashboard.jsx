@@ -1,69 +1,160 @@
 
+import { useState, useEffect, useCallback } from "react";
+
 import {
   Package,
   CheckCircle2,
   Truck,
   Clock,
   TrendingUp,
-  Activity
+  Activity,
+  RefreshCw
 } from "lucide-react";
 
 import StatCard from "../components/StatCard";
 import OrderTable from "../components/OrderTable";
 
+import { obtenerTodosLosPedidos } from "../services/api";
+
 function Dashboard() {
 
-  // Datos temporales para construir la interfaz.
-  // Despues los conectaremos con nuestra API.
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState("");
+  const [lastUpdated, setLastUpdated] = useState(null);
 
-  const orders = [
-    {
-      id: "ord-001",
-      tracking_number: "LUL-2026-001",
-      client_name: "Carlos Ramirez",
-      address: "Centro, Guanajuato",
-      status: "en_transito",
-      estimated_time: "14:30"
-    },
-    {
-      id: "ord-002",
-      tracking_number: "LUL-2026-002",
-      client_name: "Maria Gonzalez",
-      address: "San Miguel, Guanajuato",
-      status: "pendiente",
-      estimated_time: "15:00"
-    },
-    {
-      id: "ord-003",
-      tracking_number: "LUL-2026-003",
-      client_name: "Jose Hernandez",
-      address: "Zona Norte, Guanajuato",
-      status: "entregado",
-      estimated_time: "12:45"
+  // Consultar pedidos desde el backend
+  const cargarPedidos = useCallback(async (silencioso = false) => {
+
+    try {
+
+      if (silencioso) {
+        setRefreshing(true);
+      }
+
+      setError("");
+
+      const data = await obtenerTodosLosPedidos();
+
+      setOrders(Array.isArray(data) ? data : []);
+
+      setLastUpdated(new Date());
+
+    } catch (error) {
+
+      console.error("Error al cargar pedidos:", error);
+
+      setError("No se pudieron cargar los pedidos. Intenta actualizar.");
+
+    } finally {
+
+      setLoading(false);
+      setRefreshing(false);
+
     }
-  ];
+
+  }, []);
+
+  // Carga inicial y actualización automática
+  useEffect(() => {
+
+    cargarPedidos();
+
+    const intervalo = setInterval(() => {
+      cargarPedidos(true);
+    }, 30000);
+
+    return () => clearInterval(intervalo);
+
+  }, [cargarPedidos]);
+
+  // Calcular estadísticas reales
+  const totalPedidos = orders.length;
+
+  const entregados = orders.filter(
+    order => order.status === "entregado"
+  ).length;
+
+  const pendientes = orders.filter(
+    order => order.status === "pendiente"
+  ).length;
+
+  const enTransito = orders.filter(
+    order => order.status === "en_transito"
+  ).length;
+
+  // Porcentaje de entregas completadas
+  const porcentaje = totalPedidos > 0
+    ? Math.round((entregados / totalPedidos) * 100)
+    : 0;
+
+  // Mostrar solamente los cinco pedidos recientes
+  const pedidosRecientes = orders.slice(0, 5);
 
   return (
+
     <div className="dashboard">
 
-     <div className="dashboard-heading orders-heading">
+      {/* Encabezado */}
+      <div className="dashboard-heading orders-heading">
+
         <div>
-          <span className="welcome-label">PANEL DE CONTROL</span>
+          <span className="welcome-label">
+            PANEL DE CONTROL
+          </span>
+
           <h1>Dashboard</h1>
-          <p>Bienvenido de nuevo. Aqui tienes el resumen de operaciones.</p>
+
+          <p>
+            Bienvenido de nuevo. Aqui tienes el resumen de operaciones.
+          </p>
         </div>
 
         <div className="dashboard-date">
           <Activity size={17} />
           Operaciones en tiempo real
         </div>
+
       </div>
 
+      {/* Actualizacion */}
+      <div className="dashboard-refresh">
+
+        <span>
+          {lastUpdated
+            ? `Ultima actualizacion: ${lastUpdated.toLocaleTimeString("es-MX")}`
+            : "Esperando datos del servidor..."}
+        </span>
+
+        <button
+          className="refresh-button"
+          onClick={() => cargarPedidos(true)}
+          disabled={refreshing || loading}
+        >
+          <RefreshCw
+            size={16}
+            className={refreshing ? "refresh-spinning" : ""}
+          />
+
+          {refreshing ? "Actualizando..." : "Actualizar"}
+        </button>
+
+      </div>
+
+      {/* Error de conexion */}
+      {error && (
+        <div className="dashboard-error">
+          {error}
+        </div>
+      )}
+
+      {/* Tarjetas de estadisticas */}
       <div className="stats-grid">
 
         <StatCard
           title="Total de pedidos"
-          value="128"
+          value={loading ? "..." : totalPedidos}
           description="Pedidos registrados"
           icon={Package}
           color="blue"
@@ -71,7 +162,7 @@ function Dashboard() {
 
         <StatCard
           title="Entregas completadas"
-          value="86"
+          value={loading ? "..." : entregados}
           description="Pedidos entregados"
           icon={CheckCircle2}
           color="green"
@@ -79,7 +170,7 @@ function Dashboard() {
 
         <StatCard
           title="En transito"
-          value="29"
+          value={loading ? "..." : enTransito}
           description="Pedidos en reparto"
           icon={Truck}
           color="purple"
@@ -87,7 +178,7 @@ function Dashboard() {
 
         <StatCard
           title="Pendientes"
-          value="13"
+          value={loading ? "..." : pendientes}
           description="Esperando asignacion"
           icon={Clock}
           color="yellow"
@@ -95,20 +186,24 @@ function Dashboard() {
 
       </div>
 
+      {/* Resumen de operaciones */}
       <div className="dashboard-middle">
 
         <div className="performance-card">
+
           <div className="section-header">
+
             <div>
               <h3>Resumen de operaciones</h3>
               <p>Estado general de las entregas</p>
             </div>
 
             <TrendingUp size={21} color="#16A36A" />
+
           </div>
 
           <div className="performance-number">
-            67.2%
+            {loading ? "..." : `${porcentaje}%`}
           </div>
 
           <p className="performance-description">
@@ -116,53 +211,88 @@ function Dashboard() {
           </p>
 
           <div className="progress-bar">
-            <div className="progress-fill"></div>
+            <div
+              className="progress-fill"
+              style={{ width: `${porcentaje}%` }}
+            ></div>
           </div>
 
           <div className="progress-labels">
             <span>Entregas completadas</span>
-            <strong>86 de 128</strong>
+
+            <strong>
+              {entregados} de {totalPedidos}
+            </strong>
           </div>
+
         </div>
 
+        {/* Distribucion real de pedidos */}
         <div className="activity-card">
+
           <div className="section-header">
             <div>
-              <h3>Actividad reciente</h3>
-              <p>Movimientos de la operacion</p>
+              <h3>Estado de los pedidos</h3>
+              <p>Distribucion actual de las operaciones</p>
             </div>
           </div>
 
           <div className="activity-item">
+
             <div className="activity-icon green">
               <CheckCircle2 size={18} />
             </div>
 
             <div>
-              <strong>Entrega completada</strong>
-              <p>Pedido LUL-2026-003</p>
-              <span>Hace 10 minutos</span>
+              <strong>Entregados</strong>
+              <p>{entregados} pedidos completados</p>
             </div>
+
           </div>
 
           <div className="activity-item">
+
             <div className="activity-icon blue">
               <Truck size={18} />
             </div>
 
             <div>
-              <strong>Pedido en reparto</strong>
-              <p>Pedido LUL-2026-001</p>
-              <span>Hace 25 minutos</span>
+              <strong>En transito</strong>
+              <p>{enTransito} pedidos en reparto</p>
             </div>
+
           </div>
+
+          <div className="activity-item">
+
+            <div className="activity-icon yellow">
+              <Clock size={18} />
+            </div>
+
+            <div>
+              <strong>Pendientes</strong>
+              <p>{pendientes} pedidos por asignar</p>
+            </div>
+
+          </div>
+
         </div>
 
       </div>
 
-      <OrderTable orders={orders} />
+      {/* Tabla de pedidos */}
+      {loading ? (
+        <div className="orders-card">
+          <p className="empty-table">
+            Cargando pedidos desde el servidor...
+          </p>
+        </div>
+      ) : (
+        <OrderTable orders={pedidosRecientes} />
+      )}
 
     </div>
+
   );
 }
 

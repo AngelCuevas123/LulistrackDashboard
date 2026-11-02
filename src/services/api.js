@@ -1,68 +1,137 @@
 
+import { supabase } from "./supabase";
+
 const API_URL = "https://backendlulistrack.onrender.com";
 
-// Obtener pedidos
-export async function obtenerPedidos() {
-  const respuesta = await fetch(`${API_URL}/orders/`);
+// Obtener el token de la sesion actual
+async function obtenerHeaders() {
+  const { data, error } = await supabase.auth.getSession();
 
-  if (!respuesta.ok) {
-    throw new Error("Error al obtener los pedidos");
+  if (error || !data.session) {
+    throw new Error("No hay una sesion activa. Inicia sesion nuevamente.");
   }
 
-  return await respuesta.json();
+  return {
+    Authorization: `Bearer ${data.session.access_token}`
+  };
 }
 
-// Registrar un pedido
-export async function crearPedido(datos) {
-  const respuesta = await fetch(`${API_URL}/orders/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(datos),
-  });
+// Convertir errores del backend en mensajes legibles
+async function obtenerMensajeError(respuesta, mensajePredeterminado) {
+  try {
+    const contenido = await respuesta.json();
+    const detalle = contenido.detail || contenido.message || contenido.error;
 
-  if (!respuesta.ok) {
-    const error = await respuesta.text();
-    throw new Error(error || "No se pudo registrar el pedido");
-  }
+    if (typeof detalle === "string") {
+      return detalle;
+    }
 
-  return await respuesta.json();
-}
+    if (Array.isArray(detalle)) {
+      return detalle.map((error) => {
+        if (typeof error === "string") return error;
 
-// Obtener pedidos activos y completados para seguimiento
-export async function obtenerTodosLosPedidos() {
-  const [activos, completados] = await Promise.all([
-    fetch(`${API_URL}/orders/`),
-    fetch(`${API_URL}/orders/completed`)
-  ]);
+        const campo = Array.isArray(error.loc)
+          ? error.loc.join(".")
+          : "Dato";
 
-  if (!activos.ok || !completados.ok) {
-    throw new Error("No se pudieron consultar los pedidos");
-  }
+        return `${campo}: ${error.msg || JSON.stringify(error)}`;
+      }).join(" | ");
+    }
 
-  const pedidosActivos = await activos.json();
-  const pedidosCompletados = await completados.json();
+    if (detalle && typeof detalle === "object") {
+      return JSON.stringify(detalle);
+    }
 
-  return [...pedidosActivos, ...pedidosCompletados];
-}
-
-// Obtener evidencias de una entrega
-export async function obtenerEvidencias(orderId) {
-  const respuesta = await fetch(
-    `${API_URL}/orders/${encodeURIComponent(orderId)}/evidence`
-  );
-
-  if (!respuesta.ok) {
-    let mensaje = "No se pudieron consultar las evidencias";
-
+    return mensajePredeterminado;
+  } catch {
     try {
-      const error = await respuesta.json();
-      mensaje = error.detail || mensaje;
-    } catch {}
+      const texto = await respuesta.text();
+      return texto || mensajePredeterminado;
+    } catch {
+      return mensajePredeterminado;
+    }
+  }
+}
+
+// Realizar solicitudes al backend
+async function solicitar(endpoint, opciones = {}) {
+  let respuesta;
+
+  try {
+    const headers = await obtenerHeaders();
+
+    respuesta = await fetch(`${API_URL}${endpoint}`, {
+      ...opciones,
+      headers: {
+        ...headers,
+        ...opciones.headers
+      }
+    });
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error("No se pudo conectar con el servidor. Intenta nuevamente.");
+    }
+
+    throw error;
+  }
+
+  if (!respuesta.ok) {
+    const mensaje = await obtenerMensajeError(
+      respuesta,
+      `Error ${respuesta.status}: ${respuesta.statusText}`
+    );
 
     throw new Error(mensaje);
   }
 
-  return await respuesta.json();
+  if (respuesta.status === 204) {
+    return null;
+  }
+
+  return respuesta.json();
 }
+
+// Obtener pedidos
+export async function obtenerPedidos() {
+  return solicitar("/orders/");
+}
+
+// Registrar un pedido
+export async function crearPedido(datos) {
+  return solicitar("/orders/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(datos)
+  });
+}
+
+// Obtener pedidos activos y completados
+export async function obtenerTodosLosPedidos() {
+  return solicitar("/orders/");
+}
+
+// Obtener evidencias de una entrega
+export async function obtenerEvidencias(orderId) {
+  return solicitar(
+    `/orders/${encodeURIComponent(orderId)}/evidence`
+  );
+}
+
+// Obtener todos los repartidores
+export async function obtenerRepartidores() {
+  return solicitar("/drivers/");
+}
+
+// Registrar un nuevo repartidor
+export async function crearRepartidor(datos) {
+  return solicitar("/drivers/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(datos)
+  });
+}
+

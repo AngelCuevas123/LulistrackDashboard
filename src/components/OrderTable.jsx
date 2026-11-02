@@ -1,4 +1,3 @@
-
 import { ArrowUpRight } from "lucide-react";
 
 function OrderTable({ orders = [] }) {
@@ -32,20 +31,23 @@ function OrderTable({ orders = [] }) {
               orders.map((order) => (
                 <tr key={order.id}>
                   <td className="tracking-number">
-                    {order.tracking_number}
+                    {order.tracking_number || "Sin numero"}
                   </td>
 
-                  <td>{order.client_name}</td>
+                  <td>{order.client_name || "Sin cliente"}</td>
 
-                  <td>{order.address}</td>
+                  <td>
+                    {order.address || "Sin direccion"}
+                    {order.colony && `, ${order.colony}`}
+                  </td>
 
                   <td>
                     <span className={`status-badge ${order.status}`}>
-                      {order.status.replace("_", " ")}
+                      {(order.status || "sin estado").replaceAll("_", " ")}
                     </span>
                   </td>
 
-                  <td>{order.estimated_time}</td>
+                  <td>{order.estimated_time || "--:--"}</td>
                 </tr>
               ))
             ) : (
