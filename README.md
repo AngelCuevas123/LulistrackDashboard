@@ -1,16 +1,165 @@
-# React + Vite
+# Lulistrack Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Panel web administrativo de **Lulistrack**, una plataforma para apoyar la gestion de entregas de ultima milla. Permite consultar pedidos, administrar repartidores, dar seguimiento a entregas y revisar el historial desde una sola interfaz.
 
-Currently, two official plugins are available:
+## Aplicacion en linea
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Dashboard:** https://lulistrack-dashboard.vercel.app
+- **Backend API:** https://backendlulistrack.onrender.com
+- **Repositorio del dashboard:** https://github.com/AngelCuevas123/LulistrackDashboard
 
-## React Compiler
+## Tecnologias
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19
+- Vite 8
+- React Router DOM
+- Supabase JavaScript Client y Supabase Auth
+- Lucide React para iconos
+- CSS para los estilos de la interfaz
+- API REST desarrollada con FastAPI
+- Despliegue web en Vercel
 
-## Expanding the Oxlint configuration
+## Funcionalidades
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- Inicio de sesion mediante Supabase Auth.
+- Validacion de acceso administrativo con el backend.
+- Vista general del estado de la operacion.
+- Consulta y registro de pedidos.
+- Administracion y registro de repartidores.
+- Asignacion de pedidos a repartidores.
+- Seguimiento de pedidos.
+- Consulta del historial de entregas completadas.
+- Consulta de evidencias asociadas a las entregas.
+- Seccion de configuracion del panel.
+
+> El acceso a las funciones administrativas requiere una sesion valida y permisos autorizados por el backend.
+
+## Estructura del proyecto
+
+```text
+LulistrackDashboard/
+├── public/                 # Recursos publicos de la aplicacion
+├── src/
+│   ├── assets/             # Imagenes e iconos
+│   ├── components/         # Componentes reutilizables
+│   │   ├── Header.jsx
+│   │   ├── OrderTable.jsx
+│   │   ├── Sidebar.jsx
+│   │   └── StatCard.jsx
+│   ├── pages/              # Vistas principales
+│   │   ├── Dashboard.jsx
+│   │   ├── Drivers.jsx
+│   │   ├── History.jsx
+│   │   ├── Login.jsx
+│   │   ├── Orders.jsx
+│   │   ├── Settings.jsx
+│   │   └── Tracking.jsx
+│   ├── services/           # Conexion con Supabase y backend
+│   │   ├── api.js
+│   │   └── supabase.js
+│   ├── styles/             # Estilos globales
+│   ├── App.jsx             # Rutas y control de sesion
+│   └── main.jsx            # Punto de entrada de React
+├── .env.example            # Variables necesarias (sin credenciales reales)
+├── .gitignore
+├── index.html
+├── package.json
+└── vite.config.js
+```
+
+## Requisitos
+
+- Node.js y npm compatibles con la version de Vite utilizada.
+- Acceso al proyecto de Supabase.
+- Backend de Lulistrack disponible.
+
+## Instalacion y ejecucion local
+
+1. Clona el repositorio:
+
+   ```bash
+   git clone https://github.com/AngelCuevas123/LulistrackDashboard.git
+   ```
+
+2. Entra a la carpeta:
+
+   ```bash
+   cd LulistrackDashboard
+   ```
+
+3. Instala las dependencias:
+
+   ```bash
+   npm install
+   ```
+
+4. Crea un archivo `.env` en la raiz del proyecto tomando como referencia `.env.example` y agrega los valores de tu proyecto de Supabase.
+
+5. Inicia el servidor de desarrollo:
+
+   ```bash
+   npm run dev
+   ```
+
+Vite mostrara en la terminal la direccion local para abrir el dashboard en el navegador.
+
+## Variables de entorno
+
+El frontend necesita estas variables:
+
+| Variable | Descripcion |
+| --- | --- |
+| `VITE_SUPABASE_URL` | URL del proyecto de Supabase. |
+| `VITE_SUPABASE_ANON_KEY` | Clave publica anonima (publishable/anon) de Supabase. |
+
+Ejemplo de formato:
+
+```env
+VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+VITE_SUPABASE_ANON_KEY=tu_clave_publica_anon
+```
+
+No publiques archivos `.env` ni incluyas claves `service_role`, contrasenas de base de datos o tokens privados en el frontend. La clave anon/publishable esta diseñada para usarse en el cliente, pero las tablas y recursos deben estar protegidos con politicas RLS adecuadas en Supabase.
+
+## Scripts disponibles
+
+| Comando | Uso |
+| --- | --- |
+| `npm run dev` | Inicia el servidor local de desarrollo. |
+| `npm run build` | Genera la version de produccion en `dist/`. |
+| `npm run preview` | Previsualiza localmente la compilacion. |
+| `npm run lint` | Ejecuta Oxlint. |
+
+## Comunicacion con el backend
+
+El archivo `src/services/api.js` centraliza las solicitudes HTTP a:
+
+```text
+https://backendlulistrack.onrender.com
+```
+
+Antes de realizar solicitudes protegidas, el dashboard obtiene la sesion actual de Supabase y envia el token de acceso como encabezado:
+
+```http
+Authorization: Bearer <access_token>
+```
+
+El backend valida la autenticacion y los permisos antes de permitir operaciones administrativas.
+
+## Despliegue
+
+El dashboard esta preparado para desplegarse en Vercel:
+
+1. Importa este repositorio en Vercel.
+2. Configura `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en las variables de entorno del proyecto.
+3. Usa `npm run build` como comando de compilacion.
+4. Usa `dist` como directorio de salida.
+5. Vuelve a desplegar cuando cambien las variables de entorno.
+
+## Proyecto relacionado
+
+Lulistrack se complementa con un backend independiente que concentra la logica de negocio y la comunicacion con la base de datos. Este repositorio contiene unicamente el dashboard web.
+
+---
+
+**Lulistrack** — Panel web para la gestion y seguimiento de entregas de ultima milla.
