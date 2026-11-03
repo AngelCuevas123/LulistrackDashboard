@@ -131,7 +131,7 @@ VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
 VITE_SUPABASE_ANON_KEY=tu_clave_publica_anon
 ```
 
-No publiques archivos `.env` ni incluyas claves `service_role`, contrasenas de base de datos o tokens privados en el frontend. La clave anon/publishable esta diseñada para usarse en el cliente, pero las tablas y recursos deben estar protegidos con politicas RLS adecuadas en Supabase.
+La aplicacion web utiliza la clave publica de Supabase. La autorizacion de operaciones administrativas se valida en el backend y el acceso a los datos se controla mediante las politicas RLS de Supabase.
 
 ## Scripts disponibles
 
