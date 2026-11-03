@@ -8,6 +8,12 @@ Panel web administrativo de **Lulistrack**, una plataforma para apoyar la gestio
 - **Backend API:** https://backendlulistrack.onrender.com
 - **Repositorio del dashboard:** https://github.com/AngelCuevas123/LulistrackDashboard
 
+## Acceso para evaluacion
+
+Para revisar la plataforma, ingresa al [Dashboard de Lulistrack](https://lulistrack-dashboard.vercel.app) e inicia sesion con las credenciales de evaluacion proporcionadas por separado por el responsable del proyecto.
+
+La cuenta de evaluacion cuenta con permisos administrativos para acceder a las funciones del panel. Las credenciales no se incluyen en este repositorio.
+
 ## Tecnologias
 
 - React 19
@@ -72,7 +78,7 @@ LulistrackDashboard/
 │   ├── styles/             # Estilos globales
 │   ├── App.jsx             # Rutas y control de sesion
 │   └── main.jsx            # Punto de entrada de React
-├── .env.example            # Variables necesarias (sin credenciales reales)
+├── .env.example            # Variables necesarias
 ├── .gitignore
 ├── index.html
 ├── package.json
