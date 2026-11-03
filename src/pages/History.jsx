@@ -10,7 +10,10 @@ import {
   CalendarCheck
 } from "lucide-react";
 
-import { obtenerPedidos, obtenerEvidencias } from "../services/api";
+import {
+  obtenerEntregasCompletadas,
+  obtenerEvidencias
+} from "../services/api";
 
 function History() {
   const [pedidos, setPedidos] = useState([]);
@@ -29,16 +32,9 @@ function History() {
       setCargando(true);
       setError("");
 
-      const respuesta = await fetch(
-        "https://backendlulistrack.onrender.com/orders/completed"
-      );
+      const datos = await obtenerEntregasCompletadas();
 
-      if (!respuesta.ok) {
-        throw new Error("No se pudo cargar el historial");
-      }
-
-      const datos = await respuesta.json();
-      setPedidos(datos);
+      setPedidos(Array.isArray(datos) ? datos : []);
 
     } catch (err) {
       setError(err.message);
@@ -59,9 +55,7 @@ function History() {
     setCargandoEvidencias(true);
 
     try {
-      const datos = await obtenerEvidencias(
-        pedido.tracking_number || pedido.id
-      );
+      const datos = await obtenerEvidencias(pedido.id);
 
       setEvidencias(datos);
 
@@ -219,6 +213,7 @@ function History() {
                 onClick={() => {
                   setPedidoSeleccionado(null);
                   setEvidencias(null);
+                  setErrorEvidencias("");
                 }}
               >
                 <X size={20} />
@@ -250,16 +245,20 @@ function History() {
                       Fotografía de entrega
                     </h3>
 
-                    <a
-                      href={evidencias.photo_url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <img
-                        src={evidencias.photo_url}
-                        alt="Fotografía de entrega"
-                      />
-                    </a>
+                    {evidencias.photo_url ? (
+                      <a
+                        href={evidencias.photo_url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <img
+                          src={evidencias.photo_url}
+                          alt="Fotografía de entrega"
+                        />
+                      </a>
+                    ) : (
+                      <p>No hay fotografía registrada.</p>
+                    )}
                   </div>
 
                   <div className="evidence-preview">
@@ -268,16 +267,20 @@ function History() {
                       Firma del cliente
                     </h3>
 
-                    <a
-                      href={evidencias.signature_url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <img
-                        src={evidencias.signature_url}
-                        alt="Firma del cliente"
-                      />
-                    </a>
+                    {evidencias.signature_url ? (
+                      <a
+                        href={evidencias.signature_url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <img
+                          src={evidencias.signature_url}
+                          alt="Firma del cliente"
+                        />
+                      </a>
+                    ) : (
+                      <p>No hay firma registrada.</p>
+                    )}
                   </div>
 
                 </div>
@@ -290,6 +293,7 @@ function History() {
                 onClick={() => {
                   setPedidoSeleccionado(null);
                   setEvidencias(null);
+                  setErrorEvidencias("");
                 }}
               >
                 Cerrar
@@ -305,4 +309,3 @@ function History() {
 }
 
 export default History;
-

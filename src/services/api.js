@@ -145,3 +145,7 @@ export async function asignarPedido(orderId, driverId) {
     }
   );
 }
+// Obtener historial de entregas completadas
+export async function obtenerEntregasCompletadas() {
+  return solicitar("/orders/completed");
+}
