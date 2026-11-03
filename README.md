@@ -25,7 +25,7 @@ Panel web administrativo de **Lulistrack**, una plataforma para apoyar la gestio
 - Validacion de acceso administrativo con el backend.
 - Vista general del estado de la operacion.
 - Consulta y registro de pedidos.
-- Administracion y registro de repartidores.
+- Administracion y registro de repartidores, incluyendo la creacion de sus cuentas de acceso en Supabase Auth.
 - Asignacion de pedidos a repartidores.
 - Seguimiento de pedidos.
 - Consulta del historial de entregas completadas.
@@ -33,6 +33,18 @@ Panel web administrativo de **Lulistrack**, una plataforma para apoyar la gestio
 - Seccion de configuracion del panel.
 
 > El acceso a las funciones administrativas requiere una sesion valida y permisos autorizados por el backend.
+
+## Alta y autorizacion de repartidores
+
+El registro de repartidores se realiza desde el Dashboard y no desde la app movil:
+
+1. Un administrador autorizado inicia sesion en el panel.
+2. En **Repartidores**, selecciona **Nuevo repartidor** y captura nombre, correo, contraseña inicial y vehiculo.
+3. El Dashboard envia los datos al endpoint protegido `POST /drivers/`.
+4. El backend comprueba que el usuario que realiza la solicitud sea administrador. Si tiene permiso, crea la cuenta en Supabase Auth, confirma el correo y guarda el perfil vinculado en PostgreSQL.
+5. El repartidor ya puede iniciar sesion en la app Flutter con el correo y la contraseña asignados.
+
+La creacion de cuentas esta restringida al administrador validado por el backend. No es un formulario de autorregistro abierto al publico.
 
 ## Estructura del proyecto
 
