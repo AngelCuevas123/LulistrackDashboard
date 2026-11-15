@@ -6,9 +6,12 @@ Este repositorio contiene el dashboard web. La aplicación móvil y el backend s
 
 ## Aplicación en línea
 
-- **Dashboard:** https://lulistrack-dashboard.vercel.app
+- **Dashboard administrativo:** https://lulistrack-dashboard.vercel.app
+- **Seguimiento público para clientes:** https://lulistrack-dashboard.vercel.app/seguimiento
 - **Backend API:** https://backendlulistrack.onrender.com
 - **Documentación de la API:** https://backendlulistrack.onrender.com/docs
+
+Los clientes pueden entrar al enlace de seguimiento público e ingresar su número de guía para consultar el estado de su pedido. No necesitan iniciar sesión en el dashboard.
 
 ## Ecosistema Lulistrack
 
@@ -30,7 +33,8 @@ Este repositorio contiene el dashboard web. La aplicación móvil y el backend s
 - Registro y administración de repartidores.
 - Creación de cuentas de acceso para repartidores desde el panel.
 - Asignación de pedidos a repartidores.
-- Seguimiento de pedidos.
+- Seguimiento público de pedidos mediante número de guía.
+- Visualización de la ubicación del repartidor cuando hay datos GPS recientes.
 - Historial de entregas completadas.
 - Consulta de evidencias de entrega.
 - Sección de configuración del panel.
