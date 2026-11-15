@@ -164,6 +164,7 @@ function AppRoutes() {
   }
 
   return (
+    <>
       {!sesion ? (
         <Login />
       ) : acceso === "autorizado" ? (
@@ -188,6 +189,7 @@ function AppRoutes() {
       ) : (
         <Login />
       )}
+    </>
   );
 }
 
