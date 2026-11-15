@@ -149,3 +149,31 @@ export async function asignarPedido(orderId, driverId) {
 export async function obtenerEntregasCompletadas() {
   return solicitar("/orders/completed");
 }
+
+// Consultar seguimiento publico sin requerir una sesion administrativa
+export async function consultarSeguimientoPublico(numeroGuia) {
+  let respuesta;
+
+  try {
+    respuesta = await fetch(
+      `${API_URL}/orders/track/${encodeURIComponent(numeroGuia.trim())}`
+    );
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error("No se pudo conectar con el servidor. Intenta nuevamente.");
+    }
+    throw error;
+  }
+
+  if (!respuesta.ok) {
+    const mensaje = await obtenerMensajeError(
+      respuesta,
+      respuesta.status === 404
+        ? "No encontramos un pedido con ese numero de guia."
+        : "No fue posible consultar el seguimiento."
+    );
+    throw new Error(mensaje);
+  }
+
+  return respuesta.json();
+}
