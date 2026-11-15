@@ -3177,3 +3177,80 @@ a {
   .public-tracking-secure { font-size: 0; gap: 0; }
   .public-tracking-secure svg { width: 19px; height: 19px; }
 }
+
+
+/* Ubicación en vivo del repartidor en seguimiento público */
+.public-tracking-map {
+  margin-top: 22px;
+  overflow: hidden;
+  border: 1px solid #e8edf5;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.public-tracking-map-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 18px 15px;
+}
+
+.public-tracking-map-heading h3 {
+  margin: 6px 0 4px;
+  color: #213a81;
+  font-size: 15px;
+}
+
+.public-tracking-map-heading p {
+  margin: 0;
+  color: #8792a3;
+  font-size: 11px;
+}
+
+.public-tracking-live-dot {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #16a36a;
+  box-shadow: 0 0 0 5px rgba(22, 163, 106, .12);
+}
+
+.public-tracking-map iframe {
+  display: block;
+  width: 100%;
+  height: 310px;
+  border: 0;
+}
+
+.public-tracking-map-note {
+  display: block;
+  padding: 11px 15px;
+  color: #8792a3;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.public-tracking-location-wait {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 15px;
+  border: 1px solid #dbe7fb;
+  border-radius: 12px;
+  background: #f5f8fd;
+  color: #55709d;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.public-tracking-location-wait svg {
+  flex-shrink: 0;
+  color: #3974d9;
+}
+
+@media (max-width: 600px) {
+  .public-tracking-map iframe { height: 260px; }
+}
