@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import { supabase } from "./services/supabase";
 
@@ -14,12 +14,14 @@ import Drivers from "./pages/Drivers";
 import Tracking from "./pages/Tracking.jsx";
 import History from "./pages/History.jsx";
 import Settings from "./pages/Settings.jsx";
+import PublicTracking from "./pages/PublicTracking.jsx";
 
 import "./styles/global.css";
 
 const API_URL = "https://backendlulistrack.onrender.com";
 
-function App() {
+function AppRoutes() {
+  const location = useLocation();
   const [sesion, setSesion] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [acceso, setAcceso] = useState("cargando");
@@ -112,6 +114,11 @@ function App() {
     }
   };
 
+  // Esta ruta es publica y no requiere autenticacion administrativa.
+  if (location.pathname === "/seguimiento") {
+    return <PublicTracking />;
+  }
+
   if (cargando || (sesion && acceso === "cargando")) {
     return (
       <div className="login-page">
@@ -157,7 +164,6 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
       {!sesion ? (
         <Login />
       ) : acceso === "autorizado" ? (
@@ -182,6 +188,13 @@ function App() {
       ) : (
         <Login />
       )}
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
     </BrowserRouter>
   );
 }
