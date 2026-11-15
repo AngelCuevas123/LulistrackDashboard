@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Search,
   Package,
@@ -56,6 +56,27 @@ function PublicTracking() {
       setCargando(false);
     }
   }
+
+
+  // Actualizar el seguimiento mientras el pedido siga en tránsito.
+  useEffect(() => {
+    if (!pedido?.tracking_number || pedido.status !== "en_transito") {
+      return undefined;
+    }
+
+    const interval = window.setInterval(async () => {
+      try {
+        const actualizado = await consultarSeguimientoPublico(
+          pedido.tracking_number
+        );
+        setPedido(actualizado);
+      } catch {
+        // Se conserva la última ubicación válida si hay un corte temporal.
+      }
+    }, 15000);
+
+    return () => window.clearInterval(interval);
+  }, [pedido?.tracking_number, pedido?.status]);
 
   const estado = (pedido?.status || "pendiente").toLowerCase();
   const indiceActual = etapas.findIndex((etapa) => etapa.id === estado);
@@ -150,6 +171,38 @@ function PublicTracking() {
                 })}
               </div>
             </div>
+
+
+            {estado === "en_transito" && pedido.current_location && (
+              <section className="public-tracking-map">
+                <div className="public-tracking-map-heading">
+                  <div>
+                    <span className="public-tracking-eyebrow">UBICACIÓN ACTUAL</span>
+                    <h3>Tu repartidor está en camino</h3>
+                    <p>
+                      Última actualización: {formatearFecha(pedido.current_location.updated_at) || "hace unos momentos"}
+                    </p>
+                  </div>
+                  <span className="public-tracking-live-dot" aria-label="Ubicación disponible" />
+                </div>
+                <iframe
+                  title="Ubicación actual del repartidor"
+                  src={`https://maps.google.com/maps?q=${pedido.current_location.latitude},${pedido.current_location.longitude}&z=16&output=embed`}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+                <span className="public-tracking-map-note">
+                  La ubicación se actualiza automáticamente mientras el repartidor comparte su recorrido.
+                </span>
+              </section>
+            )}
+
+            {estado === "en_transito" && !pedido.current_location && (
+              <div className="public-tracking-location-wait">
+                <Truck size={19} />
+                <span>El pedido está en camino. La ubicación del repartidor aparecerá cuando se reciba su primera señal GPS.</span>
+              </div>
+            )}
 
             {entregado && (
               <div className="public-tracking-delivered">
