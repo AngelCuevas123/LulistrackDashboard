@@ -1,70 +1,74 @@
-# Lulistrack Dashboard
+# Lulistrack Dashboard — 3.0
 
-Panel web administrativo de **Lulistrack**, una plataforma para apoyar la gestion de entregas de ultima milla. Permite consultar pedidos, administrar repartidores, dar seguimiento a entregas y revisar el historial desde una sola interfaz.
+Panel web administrativo de **Lulistrack**, una plataforma para la gestión de entregas de última milla. Permite administrar pedidos y repartidores, dar seguimiento a la operación y consultar las entregas completadas.
 
-## Aplicacion en linea
+Este repositorio contiene el dashboard web. La aplicación móvil y el backend se mantienen en repositorios independientes.
+
+## Aplicación en línea
 
 - **Dashboard:** https://lulistrack-dashboard.vercel.app
 - **Backend API:** https://backendlulistrack.onrender.com
-- **Repositorio del dashboard:** https://github.com/AngelCuevas123/LulistrackDashboard
+- **Documentación de la API:** https://backendlulistrack.onrender.com/docs
 
-## Acceso para evaluacion
+## Ecosistema Lulistrack
 
-Para revisar la plataforma, ingresa al [Dashboard de Lulistrack](https://lulistrack-dashboard.vercel.app) e inicia sesion con las credenciales de evaluacion proporcionadas por separado por el responsable del proyecto.
+| Componente | Tecnología | Repositorio |
+| --- | --- | --- |
+| Aplicación para repartidores | Flutter y Dart | [LulistrackApp](https://github.com/AngelCuevas123/LulistrackApp/tree/lulistrack-3.0) |
+| API y lógica de negocio | FastAPI y Python | [BackendLulistrack](https://github.com/AngelCuevas123/BackendLulistrack/tree/lulistrack-3.0) |
+| Panel administrativo | React y Vite | Este repositorio |
+| Base de datos y autenticación | Supabase Auth y PostgreSQL | Proyecto Supabase |
+| Evidencias de entrega | Supabase Storage | Proyecto Supabase |
+| Notificaciones push | Firebase Cloud Messaging | Proyecto Firebase |
 
-La cuenta de evaluacion cuenta con permisos administrativos para acceder a las funciones del panel. Las credenciales no se incluyen en este repositorio.
+## Funcionalidades
 
-## Tecnologias
+- Inicio de sesión mediante Supabase Auth.
+- Validación de permisos administrativos mediante el backend.
+- Vista general de la operación.
+- Consulta, registro y administración de pedidos.
+- Registro y administración de repartidores.
+- Creación de cuentas de acceso para repartidores desde el panel.
+- Asignación de pedidos a repartidores.
+- Seguimiento de pedidos.
+- Historial de entregas completadas.
+- Consulta de evidencias de entrega.
+- Sección de configuración del panel.
+
+El dashboard utiliza el backend para las operaciones administrativas protegidas. Las notificaciones push se gestionan desde el backend y se reciben en la aplicación móvil.
+
+## Alta de repartidores
+
+El registro de repartidores se realiza desde el panel y no desde la app móvil:
+
+1. Un administrador autorizado inicia sesión.
+2. En **Repartidores**, selecciona **Nuevo repartidor** y captura los datos solicitados.
+3. El dashboard envía la solicitud a POST /drivers/.
+4. El backend valida los permisos, crea la cuenta en Supabase Auth y guarda el perfil relacionado en PostgreSQL.
+5. El repartidor inicia sesión en la aplicación móvil con la cuenta creada.
+
+No se deben incluir credenciales de administrador ni contraseñas de evaluación en este repositorio. Los accesos de demostración, si se requieren, se entregan por un canal separado.
+
+## Tecnologías
 
 - React 19
 - Vite 8
 - React Router DOM
 - Supabase JavaScript Client y Supabase Auth
-- Lucide React para iconos
-- CSS para los estilos de la interfaz
-- API REST desarrollada con FastAPI
-- Despliegue web en Vercel
-
-## Funcionalidades
-
-- Inicio de sesion mediante Supabase Auth.
-- Validacion de acceso administrativo con el backend.
-- Vista general del estado de la operacion.
-- Consulta y registro de pedidos.
-- Administracion y registro de repartidores, incluyendo la creacion de sus cuentas de acceso en Supabase Auth.
-- Asignacion de pedidos a repartidores.
-- Seguimiento de pedidos.
-- Consulta del historial de entregas completadas.
-- Consulta de evidencias asociadas a las entregas.
-- Seccion de configuracion del panel.
-
-> El acceso a las funciones administrativas requiere una sesion valida y permisos autorizados por el backend.
-
-## Alta y autorizacion de repartidores
-
-El registro de repartidores se realiza desde el Dashboard y no desde la app movil:
-
-1. Un administrador autorizado inicia sesion en el panel.
-2. En **Repartidores**, selecciona **Nuevo repartidor** y captura nombre, correo, contraseña inicial y vehiculo.
-3. El Dashboard envia los datos al endpoint protegido `POST /drivers/`.
-4. El backend comprueba que el usuario que realiza la solicitud sea administrador. Si tiene permiso, crea la cuenta en Supabase Auth, confirma el correo y guarda el perfil vinculado en PostgreSQL.
-5. El repartidor ya puede iniciar sesion en la app Flutter con el correo y la contraseña asignados.
-
-La creacion de cuentas esta restringida al administrador validado por el backend. No es un formulario de autorregistro abierto al publico.
+- Lucide React
+- CSS
+- API REST con FastAPI
+- Vercel para el despliegue web
 
 ## Estructura del proyecto
 
-```text
+~~~text
 LulistrackDashboard/
-├── public/                 # Recursos publicos de la aplicacion
+├── public/
 ├── src/
-│   ├── assets/             # Imagenes e iconos
-│   ├── components/         # Componentes reutilizables
-│   │   ├── Header.jsx
-│   │   ├── OrderTable.jsx
-│   │   ├── Sidebar.jsx
-│   │   └── StatCard.jsx
-│   ├── pages/              # Vistas principales
+│   ├── assets/
+│   ├── components/
+│   ├── pages/
 │   │   ├── Dashboard.jsx
 │   │   ├── Drivers.jsx
 │   │   ├── History.jsx
@@ -72,112 +76,100 @@ LulistrackDashboard/
 │   │   ├── Orders.jsx
 │   │   ├── Settings.jsx
 │   │   └── Tracking.jsx
-│   ├── services/           # Conexion con Supabase y backend
-│   │   ├── api.js
-│   │   └── supabase.js
-│   ├── styles/             # Estilos globales
-│   ├── App.jsx             # Rutas y control de sesion
-│   └── main.jsx            # Punto de entrada de React
-├── .env.example            # Variables necesarias
-├── .gitignore
+│   ├── services/
+│   ├── styles/
+│   ├── App.jsx
+│   ├── App.css
+│   ├── index.css
+│   └── main.jsx
+├── .env.example
 ├── index.html
 ├── package.json
 └── vite.config.js
-```
+~~~
 
 ## Requisitos
 
-- Node.js y npm compatibles con la version de Vite utilizada.
+- Node.js compatible con la versión de Vite del proyecto.
+- npm.
 - Acceso al proyecto de Supabase.
 - Backend de Lulistrack disponible.
 
-## Instalacion y ejecucion local
+## Instalación y ejecución local
 
-1. Clona el repositorio:
+Clona la rama 3.0:
 
-   ```bash
-   git clone https://github.com/AngelCuevas123/LulistrackDashboard.git
-   ```
+~~~bash
+git clone --branch lulistrack-3.0 https://github.com/AngelCuevas123/LulistrackDashboard.git
+cd LulistrackDashboard
+npm install
+~~~
 
-2. Entra a la carpeta:
+Crea un archivo .env en la raíz tomando como referencia .env.example:
 
-   ```bash
-   cd LulistrackDashboard
-   ```
+~~~env
+VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+VITE_SUPABASE_ANON_KEY=tu_clave_publica_anon
+~~~
 
-3. Instala las dependencias:
+Inicia el servidor de desarrollo:
 
-   ```bash
-   npm install
-   ```
-
-4. Crea un archivo `.env` en la raiz del proyecto tomando como referencia `.env.example` y agrega los valores de tu proyecto de Supabase.
-
-5. Inicia el servidor de desarrollo:
-
-   ```bash
-   npm run dev
-   ```
-
-Vite mostrara en la terminal la direccion local para abrir el dashboard en el navegador.
+~~~bash
+npm run dev
+~~~
 
 ## Variables de entorno
 
-El frontend necesita estas variables:
-
-| Variable | Descripcion |
+| Variable | Descripción |
 | --- | --- |
-| `VITE_SUPABASE_URL` | URL del proyecto de Supabase. |
-| `VITE_SUPABASE_ANON_KEY` | Clave publica anonima (publishable/anon) de Supabase. |
+| VITE_SUPABASE_URL | URL del proyecto de Supabase. |
+| VITE_SUPABASE_ANON_KEY | Clave pública anon/publishable de Supabase. |
 
-Ejemplo de formato:
+El frontend utiliza únicamente la clave pública. Las operaciones administrativas se validan en el backend. No incluyas claves privadas o contraseñas en el código ni en el repositorio.
 
-```env
-VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
-VITE_SUPABASE_ANON_KEY=tu_clave_publica_anon
-```
+## Scripts
 
-La aplicacion web utiliza la clave publica de Supabase. La autorizacion de operaciones administrativas se valida en el backend y el acceso a los datos se controla mediante las politicas RLS de Supabase.
-
-## Scripts disponibles
-
-| Comando | Uso |
+| Comando | Descripción |
 | --- | --- |
-| `npm run dev` | Inicia el servidor local de desarrollo. |
-| `npm run build` | Genera la version de produccion en `dist/`. |
-| `npm run preview` | Previsualiza localmente la compilacion. |
-| `npm run lint` | Ejecuta Oxlint. |
+| npm run dev | Inicia Vite en modo desarrollo. |
+| npm run build | Genera la compilación de producción en dist/. |
+| npm run preview | Previsualiza la compilación localmente. |
+| npm run lint | Ejecuta Oxlint. |
 
-## Comunicacion con el backend
+## Comunicación con el backend
 
-El archivo `src/services/api.js` centraliza las solicitudes HTTP a:
+Las solicitudes HTTP se centralizan en src/services/api.js y se dirigen a:
 
-```text
+~~~text
 https://backendlulistrack.onrender.com
-```
+~~~
 
-Antes de realizar solicitudes protegidas, el dashboard obtiene la sesion actual de Supabase y envia el token de acceso como encabezado:
+Las solicitudes protegidas incluyen el token de acceso de Supabase:
 
-```http
+~~~http
 Authorization: Bearer <access_token>
-```
+~~~
 
-El backend valida la autenticacion y los permisos antes de permitir operaciones administrativas.
+El backend verifica la identidad y los permisos antes de realizar operaciones administrativas.
 
-## Despliegue
+## Despliegue en Vercel
 
-El dashboard esta preparado para desplegarse en Vercel:
+El dashboard se despliega de forma independiente de la aplicación Flutter:
 
 1. Importa este repositorio en Vercel.
-2. Configura `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en las variables de entorno del proyecto.
-3. Usa `npm run build` como comando de compilacion.
-4. Usa `dist` como directorio de salida.
-5. Vuelve a desplegar cuando cambien las variables de entorno.
+2. Configura VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.
+3. Usa npm run build como comando de compilación.
+4. Configura dist como directorio de salida.
+5. Despliega la rama que corresponda al entorno.
 
-## Proyecto relacionado
+Los cambios en el repositorio de la app móvil no actualizan automáticamente este dashboard, ya que se mantienen en repositorios separados.
 
-Lulistrack se complementa con un backend independiente que concentra la logica de negocio y la comunicacion con la base de datos. Este repositorio contiene unicamente el dashboard web.
+## Repositorios relacionados
+
+- [Aplicación móvil — rama 3.0](https://github.com/AngelCuevas123/LulistrackApp/tree/lulistrack-3.0)
+- [Backend — rama 3.0](https://github.com/AngelCuevas123/BackendLulistrack/tree/lulistrack-3.0)
+- [Dashboard — rama 3.0](https://github.com/AngelCuevas123/LulistrackDashboard/tree/lulistrack-3.0)
 
 ---
 
-**Lulistrack** — Panel web para la gestion y seguimiento de entregas de ultima milla.
+**Lulistrack 3.0** — panel web para la gestión y seguimiento de entregas de última milla.
