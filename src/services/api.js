@@ -86,6 +86,34 @@ async function solicitar(endpoint, opciones = {}) {
   return respuesta.json();
 }
 
+// Inventario del negocio
+export async function obtenerProductos(incluirInactivos = false) {
+  const parametro = incluirInactivos ? "?include_inactive=true" : "";
+  return solicitar(`/inventory/products${parametro}`);
+}
+
+export async function crearProducto(datos) {
+  return solicitar("/inventory/products", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos)
+  });
+}
+
+export async function actualizarProducto(productId, datos) {
+  return solicitar(`/inventory/products/${encodeURIComponent(productId)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos)
+  });
+}
+
+export async function desactivarProducto(productId) {
+  return solicitar(`/inventory/products/${encodeURIComponent(productId)}`, {
+    method: "DELETE"
+  });
+}
+
 // Obtener pedidos
 export async function obtenerPedidos() {
   return solicitar("/orders/");
