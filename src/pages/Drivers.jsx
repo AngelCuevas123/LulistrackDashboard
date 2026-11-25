@@ -23,6 +23,7 @@ import {
 
 function Drivers() {
   const [drivers, setDrivers] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [busqueda, setBusqueda] = useState("");
 
   const [cargando, setCargando] = useState(true);
@@ -54,8 +55,9 @@ function Drivers() {
       setCargando(true);
       setError("");
 
-      const datos = await obtenerRepartidores();
+      const [datos, pedidos] = await Promise.all([obtenerRepartidores(), obtenerPedidos()]);
       setDrivers(Array.isArray(datos) ? datos : []);
+      setOrders(Array.isArray(pedidos) ? pedidos : []);
 
     } catch (err) {
       setError(err.message);
@@ -176,6 +178,7 @@ function Drivers() {
 
       setMostrarAsignacion(false);
       setConductorSeleccionado(null);
+      await cargarRepartidores();
 
     } catch (err) {
       setError(err.message);
@@ -194,6 +197,13 @@ function Drivers() {
       (driver.vehicle || "").toLowerCase().includes(texto)
     );
   });
+
+  // El estado operativo se deriva de pedidos reales asignados al repartidor.
+  const tienePedidoActivo = (driver) => orders.some((order) =>
+    order.driver_id === driver.driver_id && order.status !== "entregado"
+  );
+  const repartidoresEnRuta = repartidoresFiltrados.filter(tienePedidoActivo);
+  const repartidoresDisponibles = repartidoresFiltrados.filter((driver) => !tienePedidoActivo(driver));
 
   return (
     <div className="orders-page">
@@ -285,50 +295,28 @@ function Drivers() {
             </thead>
 
             <tbody>
-              {cargando ? (
-                <tr>
-                  <td colSpan="6" className="empty-table">
-                    Cargando repartidores...
-                  </td>
+              <tr className="driver-group-row"><td colSpan="6">En ruta <span>${repartidoresEnRuta.length}</span></td></tr>
+              {repartidoresEnRuta.length > 0 ? repartidoresEnRuta.map((driver) => (
+                <tr key={driver.driver_id}>
+                  <td className="tracking-number">{driver.driver_id}</td>
+                  <td>{driver.name}</td>
+                  <td><span className="driver-vehicle"><Truck size={15} />{driver.vehicle}</span></td>
+                  <td>{driver.completed_deliveries ?? 0}</td>
+                  <td>{driver.average_time || "Sin datos"}</td>
+                  <td><button className="refresh-button" onClick={() => abrirAsignacion(driver)}><ClipboardList size={16} /> Asignar pedido</button></td>
                 </tr>
-              ) : repartidoresFiltrados.length > 0 ? (
-                repartidoresFiltrados.map((driver) => (
-                  <tr key={driver.driver_id}>
-                    <td className="tracking-number">
-                      {driver.driver_id}
-                    </td>
-
-                    <td>{driver.name}</td>
-
-                    <td>
-                      <span className="driver-vehicle">
-                        <Truck size={15} />
-                        {driver.vehicle}
-                      </span>
-                    </td>
-
-                    <td>{driver.completed_deliveries ?? 0}</td>
-
-                    <td>{driver.average_time || "Sin datos"}</td>
-
-                    <td>
-                      <button
-                        className="refresh-button"
-                        onClick={() => abrirAsignacion(driver)}
-                      >
-                        <ClipboardList size={16} />
-                        Asignar pedido
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" className="empty-table">
-                    No se encontraron repartidores.
-                  </td>
+              )) : <tr><td colSpan="6" className="empty-table">No hay repartidores con pedidos activos.</td></tr>}
+              <tr className="driver-group-row"><td colSpan="6">Disponibles <span>{repartidoresDisponibles.length}</span></td></tr>
+              {repartidoresDisponibles.length > 0 ? repartidoresDisponibles.map((driver) => (
+                <tr key={driver.driver_id}>
+                  <td className="tracking-number">{driver.driver_id}</td>
+                  <td>{driver.name}</td>
+                  <td><span className="driver-vehicle"><Truck size={15} />{driver.vehicle}</span></td>
+                  <td>{driver.completed_deliveries ?? 0}</td>
+                  <td>{driver.average_time || "Sin datos"}</td>
+                  <td><button className="refresh-button" onClick={() => abrirAsignacion(driver)}><ClipboardList size={16} /> Asignar pedido</button></td>
                 </tr>
-              )}
+              )) : <tr><td colSpan="6" className="empty-table">No hay repartidores disponibles.</td></tr>}
             </tbody>
           </table>
         </div>
