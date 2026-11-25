@@ -180,7 +180,7 @@ function Inventory() {
 
   function estadoStock(producto) {
     if (!producto.is_active) return { texto: "Inactivo", clase: "pendiente" };
-    if (producto.stock_quantity === 0) return { texto: "Agotado", clase: "cancelado" };
+    if (producto.stock_quantity === 0) return { texto: "Agotado", clase: "pendiente" };
     if (producto.min_stock > 0 && producto.stock_quantity <= producto.min_stock) {
       return { texto: "Stock bajo", clase: "pendiente" };
     }
@@ -212,16 +212,16 @@ function Inventory() {
 
       <div className="stats-grid inventory-stats">
         <div className="stat-card">
-          <div className="stat-card-icon blue"><Boxes size={21} /></div>
-          <div><span>Productos activos</span><strong>{productosActivos.length}</strong><p>En el catálogo</p></div>
+          <div className="stat-card-top"><span>Productos activos</span><div className="stat-icon blue"><Boxes size={21} /></div></div>
+          <h2>{productosActivos.length}</h2><p>En el catálogo</p>
         </div>
         <div className="stat-card">
-          <div className="stat-card-icon yellow"><AlertTriangle size={21} /></div>
-          <div><span>Stock bajo</span><strong>{productosBajos.length}</strong><p>Requieren reposición</p></div>
+          <div className="stat-card-top"><span>Stock bajo</span><div className="stat-icon yellow"><AlertTriangle size={21} /></div></div>
+          <h2>{productosBajos.length}</h2><p>Requieren reposición</p>
         </div>
         <div className="stat-card">
-          <div className="stat-card-icon red"><Archive size={21} /></div>
-          <div><span>Agotados</span><strong>{productosAgotados.length}</strong><p>Sin existencias</p></div>
+          <div className="stat-card-top"><span>Agotados</span><div className="stat-icon purple"><Archive size={21} /></div></div>
+          <h2>{productosAgotados.length}</h2><p>Sin existencias</p>
         </div>
       </div>
 
