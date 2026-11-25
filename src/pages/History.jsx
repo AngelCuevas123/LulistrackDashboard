@@ -77,6 +77,32 @@ function History() {
     );
   });
 
+  // El historial se organiza por la fecha real de confirmación de entrega.
+  const gruposHistorial = (() => {
+    const grupos = new Map();
+    pedidosFiltrados.forEach((pedido) => {
+      const fecha = pedido.proof_timestamp ? new Date(pedido.proof_timestamp) : null;
+      const clave = fecha && !Number.isNaN(fecha.getTime())
+        ? `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, "0")}-${String(fecha.getDate()).padStart(2, "0")}`
+        : "sin-fecha";
+      if (!grupos.has(clave)) grupos.set(clave, []);
+      grupos.get(clave).push(pedido);
+    });
+    return [...grupos.entries()].sort(([a], [b]) => {
+      if (a === "sin-fecha") return 1;
+      if (b === "sin-fecha") return -1;
+      return b.localeCompare(a);
+    });
+  })();
+
+  const etiquetaDia = (clave) => {
+    if (clave === "sin-fecha") return "Fecha de entrega no registrada";
+    const [year, month, day] = clave.split("-").map(Number);
+    return new Date(year, month - 1, day).toLocaleDateString("es-MX", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric"
+    });
+  };
+
   // Formatear fecha
   const formatearFecha = (fecha) => {
     if (!fecha) return "Sin fecha registrada";
@@ -149,51 +175,48 @@ function History() {
             No se encontraron entregas.
           </div>
         ) : (
-          <div className="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Seguimiento</th>
-                  <th>Cliente</th>
-                  <th>Dirección</th>
-                  <th>Productos</th>
-                  <th>Estado</th>
-                  <th>Evidencias</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {pedidosFiltrados.map((pedido) => (
-                  <tr key={pedido.id}>
-                    <td>
-                      <strong>{pedido.tracking_number}</strong>
-                    </td>
-
-                    <td>{pedido.client_name}</td>
-
-                    <td>{pedido.address}</td>
-
-                    <td>{pedido.items?.length ? `${pedido.items.length} artículo(s)` : "Sin detalle"}</td>
-
-                    <td>
-                      <span className="status-badge entregado">
-                        Entregado
-                      </span>
-                    </td>
-
-                    <td>
-                      <button
-                        className="evidence-button"
-                        onClick={() => verEvidencias(pedido)}
-                      >
-                        <Eye size={16} />
-                        Ver evidencias
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="history-day-groups">
+            {gruposHistorial.map(([dia, entregasDia], index) => (
+              <details className="day-accordion" key={dia} open={index === 0}>
+                <summary className="day-accordion-summary">
+                  <span className="day-accordion-date">
+                    <strong>{etiquetaDia(dia)}</strong>
+                    <small>{entregasDia.length} {entregasDia.length === 1 ? "entrega" : "entregas"}</small>
+                  </span>
+                  <span className="day-accordion-chevron">⌄</span>
+                </summary>
+                <div className="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Seguimiento</th>
+                        <th>Cliente</th>
+                        <th>Dirección</th>
+                        <th>Productos</th>
+                        <th>Estado</th>
+                        <th>Evidencias</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {entregasDia.map((pedido) => (
+                        <tr key={pedido.id}>
+                          <td><strong>{pedido.tracking_number || "Sin número"}</strong></td>
+                          <td>{pedido.client_name || "Sin cliente"}</td>
+                          <td>{pedido.address || "Sin dirección"}</td>
+                          <td>{pedido.items?.length ? `${pedido.items.length} artículo(s)` : "Sin detalle"}</td>
+                          <td><span className="status-badge entregado">Entregado</span></td>
+                          <td>
+                            <button className="evidence-button" onClick={() => verEvidencias(pedido)}>
+                              <Eye size={16} /> Ver evidencias
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            ))}
           </div>
         )}
       </div>
