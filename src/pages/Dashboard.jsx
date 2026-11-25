@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 
 import {
   Package,
@@ -8,13 +9,15 @@ import {
   Clock,
   TrendingUp,
   Activity,
-  RefreshCw
+  RefreshCw,
+  AlertTriangle,
+  Warehouse
 } from "lucide-react";
 
 import StatCard from "../components/StatCard";
 import OrderTable from "../components/OrderTable";
 
-import { obtenerTodosLosPedidos } from "../services/api";
+import { obtenerTodosLosPedidos, obtenerProductos } from "../services/api";
 
 function Dashboard() {
 
@@ -23,6 +26,8 @@ function Dashboard() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [productos, setProductos] = useState([]);
+  const [errorInventario, setErrorInventario] = useState("");
 
   // Consultar pedidos desde el backend
   const cargarPedidos = useCallback(async (silencioso = false) => {
@@ -69,6 +74,21 @@ function Dashboard() {
 
   }, [cargarPedidos]);
 
+  const cargarInventario = useCallback(async () => {
+    try {
+      setErrorInventario("");
+      const data = await obtenerProductos();
+      setProductos(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error al cargar inventario:", error);
+      setErrorInventario("No se pudo consultar el inventario.");
+    }
+  }, []);
+
+  useEffect(() => {
+    cargarInventario();
+  }, [cargarInventario]);
+
   // Calcular estadísticas reales
   const totalPedidos = orders.length;
 
@@ -83,6 +103,12 @@ function Dashboard() {
   const enTransito = orders.filter(
     order => order.status === "en_transito"
   ).length;
+
+  const productosCriticos = productos.filter((producto) =>
+    producto.is_active &&
+    (producto.stock_quantity === 0 ||
+      (producto.min_stock > 0 && producto.stock_quantity <= producto.min_stock))
+  );
 
   // Porcentaje de entregas completadas
   const porcentaje = totalPedidos > 0
@@ -278,6 +304,53 @@ function Dashboard() {
 
         </div>
 
+      </div>
+
+      <div className="orders-card inventory-dashboard-card">
+        <div className="section-header">
+          <div>
+            <h3>Disponibilidad de inventario</h3>
+            <p>Productos que requieren atención antes de registrar nuevos pedidos.</p>
+          </div>
+          <Link to="/inventory" className="view-all">
+            Administrar inventario <Warehouse size={16} />
+          </Link>
+        </div>
+
+        {errorInventario ? (
+          <p className="empty-table">{errorInventario}</p>
+        ) : productosCriticos.length > 0 ? (
+          <div className="inventory-dashboard-list">
+            {productosCriticos.slice(0, 4).map((producto) => (
+              <div className="activity-item" key={producto.id}>
+                <div className="activity-icon yellow">
+                  <AlertTriangle size={18} />
+                </div>
+                <div>
+                  <strong>{producto.name}</strong>
+                  <p>
+                    {producto.stock_quantity === 0
+                      ? "Agotado"
+                      : `Quedan ${producto.stock_quantity} ${producto.unit}; mínimo ${producto.min_stock}`}
+                  </p>
+                </div>
+              </div>
+            ))}
+            {productosCriticos.length > 4 && (
+              <p className="orders-footer">Y {productosCriticos.length - 4} producto(s) más requieren atención.</p>
+            )}
+          </div>
+        ) : (
+          <div className="activity-item">
+            <div className="activity-icon green">
+              <Package size={18} />
+            </div>
+            <div>
+              <strong>Sin alertas de inventario</strong>
+              <p>Los productos activos están por encima de su nivel mínimo.</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Tabla de pedidos */}
