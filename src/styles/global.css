@@ -4227,3 +4227,87 @@ a {
     scroll-behavior: auto;
   }
 }
+
+
+/* Ajustes finales de contraste para vistas secundarias y controles */
+:root[data-theme="oscuro"] .settings-form label,
+:root[data-theme="oscuro"] .settings-section-heading h2,
+:root[data-theme="oscuro"] .status-chart-heading strong,
+:root[data-theme="oscuro"] .status-chart-label span,
+:root[data-theme="oscuro"] .status-chart-label strong {
+  color: #dce5f4;
+}
+:root[data-theme="oscuro"] .settings-form input {
+  background: #101a2d;
+  border-color: #33435f;
+  color: #edf2fb;
+}
+:root[data-theme="oscuro"] .settings-form input::placeholder {
+  color: #7f8da6;
+}
+:root[data-theme="oscuro"] .dashboard-status-chart {
+  border-top-color: #293750;
+}
+:root[data-theme="oscuro"] .evidence-date {
+  background: #1b2b46;
+  color: #c6d6eb;
+}
+:root[data-theme="oscuro"] .evidence-preview p,
+:root[data-theme="oscuro"] .inventory-description {
+  color: #9aa9c0;
+}
+:root[data-theme="oscuro"] .history-summary-icon,
+:root[data-theme="oscuro"] .summary-icon,
+:root[data-theme="oscuro"] .tracking-search-icon {
+  background: rgba(183, 231, 252, .13);
+  color: #b7e7fc;
+}
+:root[data-theme="oscuro"] .driver-vehicle {
+  color: #c6d6eb;
+}
+:root[data-theme="oscuro"] .search-shortcut {
+  border-color: #3a4a66;
+  color: #aebbd0;
+}
+:root[data-theme="oscuro"] .orders-summary h3,
+:root[data-theme="oscuro"] .settings-avatar {
+  color: #b7e7fc;
+}
+:root[data-theme="oscuro"] .inventory-inactive-toggle {
+  color: #c6d6eb;
+}
+:root[data-theme="oscuro"] .inventory-inactive-toggle input {
+  accent-color: #8cccf1;
+}
+:root[data-theme="oscuro"] .day-count.pending {
+  background: rgba(196, 139, 19, .18);
+  color: #f1ca71;
+}
+:root[data-theme="oscuro"] .day-count.transit {
+  background: rgba(57, 116, 217, .2);
+  color: #9fc3ff;
+}
+:root[data-theme="oscuro"] .day-count.delivered {
+  background: rgba(22, 163, 106, .18);
+  color: #7ce0b1;
+}
+:root[data-theme="oscuro"] .status-badge.en_transito {
+  background: rgba(57, 116, 217, .2);
+  color: #9fc3ff;
+}
+:root[data-theme="oscuro"] .status-badge.pendiente {
+  background: rgba(196, 139, 19, .18);
+  color: #f1ca71;
+}
+:root[data-theme="oscuro"] .status-badge.entregado {
+  background: rgba(22, 163, 106, .18);
+  color: #7ce0b1;
+}
+:root[data-theme="oscuro"] .status-badge.agotado {
+  background: rgba(186, 64, 120, .2);
+  color: #f0a3c5;
+}
+:root[data-theme="oscuro"] .status-badge.disponible {
+  background: rgba(22, 163, 106, .18);
+  color: #7ce0b1;
+}
