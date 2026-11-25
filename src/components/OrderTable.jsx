@@ -21,6 +21,7 @@ function OrderTable({ orders = [] }) {
               <th>Pedido</th>
               <th>Cliente</th>
               <th>Direccion</th>
+              <th>Artículos</th>
               <th>Estado</th>
               <th>Entrega</th>
             </tr>
@@ -41,6 +42,8 @@ function OrderTable({ orders = [] }) {
                     {order.colony && `, ${order.colony}`}
                   </td>
 
+                  <td>{order.items?.length ? `${order.items.length} artículo(s)` : "Sin detalle"}</td>
+
                   <td>
                     <span className={`status-badge ${order.status}`}>
                       {(order.status || "sin estado").replaceAll("_", " ")}
@@ -52,7 +55,7 @@ function OrderTable({ orders = [] }) {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="empty-table">
+                <td colSpan="6" className="empty-table">
                   No hay pedidos registrados.
                 </td>
               </tr>
