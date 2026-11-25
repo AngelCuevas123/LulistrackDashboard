@@ -320,7 +320,7 @@ function Orders() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="empty-table">
+                  <td colSpan="6" className="empty-table">
                     No se encontraron pedidos.
                   </td>
                 </tr>
