@@ -156,6 +156,7 @@ function History() {
                   <th>Seguimiento</th>
                   <th>Cliente</th>
                   <th>Dirección</th>
+                  <th>Productos</th>
                   <th>Estado</th>
                   <th>Evidencias</th>
                 </tr>
@@ -171,6 +172,8 @@ function History() {
                     <td>{pedido.client_name}</td>
 
                     <td>{pedido.address}</td>
+
+                    <td>{pedido.items?.length ? `${pedido.items.length} artículo(s)` : "Sin detalle"}</td>
 
                     <td>
                       <span className="status-badge entregado">
