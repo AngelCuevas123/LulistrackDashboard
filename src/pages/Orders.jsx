@@ -195,7 +195,7 @@ function Orders() {
     pedidosFiltrados.forEach((order) => {
       const fecha = order.created_at ? new Date(order.created_at) : null;
       const clave = fecha && !Number.isNaN(fecha.getTime())
-        ? fecha.toLocaleDateString("en-CA")
+        ? `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, "0")}-${String(fecha.getDate()).padStart(2, "0")}`
         : "sin-fecha";
       if (!grupos.has(clave)) grupos.set(clave, []);
       grupos.get(clave).push(order);
