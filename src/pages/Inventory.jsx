@@ -290,7 +290,7 @@ function Inventory() {
               {cargando ? (
                 <tr><td colSpan="7" className="empty-table">Cargando inventario...</td></tr>
               ) : gruposInventario.length > 0 ? (
-                gruposInventario.map((grupo, index) => (
+                gruposInventario.map((grupo) => (
                   <React.Fragment key={grupo.key}>
                     <tr className="driver-group-row inventory-group-row">
                       <td colSpan="7">{grupo.label}<span>{grupo.items.length}</span></td>
