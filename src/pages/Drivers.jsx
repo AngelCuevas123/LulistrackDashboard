@@ -143,7 +143,7 @@ function Drivers() {
       setPedidosDisponibles(disponibles);
 
       if (disponibles.length > 0) {
-        setPedidoSeleccionado(disponibles[0].id);
+        setPedidoSeleccionado(String(disponibles[0].id));
       }
 
     } catch (err) {
@@ -200,7 +200,8 @@ function Drivers() {
 
   // El estado operativo se deriva de pedidos reales asignados al repartidor.
   const tienePedidoActivo = (driver) => orders.some((order) =>
-    order.driver_id === driver.driver_id && order.status !== "entregado"
+    String(order.driver_id) === String(driver.driver_id) &&
+    ["pendiente", "en_transito"].includes(order.status)
   );
   const repartidoresEnRuta = repartidoresFiltrados.filter(tienePedidoActivo);
   const repartidoresDisponibles = repartidoresFiltrados.filter((driver) => !tienePedidoActivo(driver));
@@ -509,14 +510,14 @@ function Drivers() {
                       <h3>
                         {
                           pedidosDisponibles.find(
-                            (pedido) => pedido.id === pedidoSeleccionado
+                            (pedido) => String(pedido.id) === String(pedidoSeleccionado)
                           )?.tracking_number
                         }
                       </h3>
                       <p>
                         {
                           pedidosDisponibles.find(
-                            (pedido) => pedido.id === pedidoSeleccionado
+                            (pedido) => String(pedido.id) === String(pedidoSeleccionado)
                           )?.address
                         }
                       </p>
