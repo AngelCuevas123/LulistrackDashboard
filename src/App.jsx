@@ -10,6 +10,7 @@ import Header from "./components/Header";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Orders from "./pages/Orders.jsx";
+import Inventory from "./pages/Inventory.jsx";
 import Drivers from "./pages/Drivers";
 import Tracking from "./pages/Tracking.jsx";
 import History from "./pages/History.jsx";
@@ -178,6 +179,7 @@ function AppRoutes() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/orders" element={<Orders />} />
+                <Route path="/inventory" element={<Inventory />} />
                 <Route path="/drivers" element={<Drivers />} />
                 <Route path="/tracking" element={<Tracking />} />
                 <Route path="/history" element={<History />} />
