@@ -10,7 +10,8 @@ import {
   MapPin,
   Clock,
   User,
-  Hash
+  Hash,
+  ListFilter
 } from "lucide-react";
 
 import { obtenerPedidos, crearPedido, obtenerProductos } from "../services/api";
@@ -18,6 +19,7 @@ import { obtenerPedidos, crearPedido, obtenerProductos } from "../services/api";
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [busqueda, setBusqueda] = useState("");
+  const [filtroEstado, setFiltroEstado] = useState("todos");
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -177,12 +179,13 @@ function Orders() {
   // Buscador
   const pedidosFiltrados = orders.filter((order) => {
     const texto = busqueda.toLowerCase();
-
-    return (
+    const coincideTexto = (
       (order.tracking_number || "").toLowerCase().includes(texto) ||
       (order.client_name || "").toLowerCase().includes(texto) ||
       (order.address || "").toLowerCase().includes(texto)
     );
+    const coincideEstado = filtroEstado === "todos" || order.status === filtroEstado;
+    return coincideTexto && coincideEstado;
   });
 
   return (
@@ -255,6 +258,20 @@ function Orders() {
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
           />
+        </div>
+        <div className="orders-status-filter">
+          <ListFilter size={17} />
+          <label htmlFor="filtro-estado-pedidos">Estado</label>
+          <select
+            id="filtro-estado-pedidos"
+            value={filtroEstado}
+            onChange={(e) => setFiltroEstado(e.target.value)}
+          >
+            <option value="todos">Todos los pedidos</option>
+            <option value="pendiente">Pendientes</option>
+            <option value="en_transito">En tránsito</option>
+            <option value="entregado">Entregados</option>
+          </select>
         </div>
 
         <div className="table-container">
