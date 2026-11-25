@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import React from "react";
 import {
   AlertTriangle,
   Archive,
@@ -77,6 +78,15 @@ function Inventory() {
         .some((valor) => (valor || "").toLowerCase().includes(texto))
     );
   }, [productos, busqueda]);
+
+  const gruposInventario = [
+    { key: "agotados", label: "Agotados", items: productosFiltrados.filter((p) => p.is_active && p.stock_quantity === 0) },
+    { key: "bajos", label: "Stock bajo", items: productosFiltrados.filter((p) => p.is_active && p.stock_quantity > 0 && p.min_stock > 0 && p.stock_quantity <= p.min_stock) },
+    { key: "disponibles", label: "Disponibles", items: productosFiltrados.filter((p) => p.is_active && !(p.stock_quantity === 0 || (p.min_stock > 0 && p.stock_quantity <= p.min_stock))) },
+    { key: "inactivos", label: "Inactivos", items: productosFiltrados.filter((p) => !p.is_active) }
+  ].filter((grupo) => grupo.items.length > 0);
+
+
 
   function abrirNuevoProducto() {
     setProductoEditando(null);
@@ -279,35 +289,35 @@ function Inventory() {
             <tbody>
               {cargando ? (
                 <tr><td colSpan="7" className="empty-table">Cargando inventario...</td></tr>
-              ) : productosFiltrados.length > 0 ? (
-                productosFiltrados.map((producto) => {
-                  const estado = estadoStock(producto);
-                  return (
-                    <tr key={producto.id}>
-                      <td className="tracking-number">{producto.sku}</td>
-                      <td>
-                        <strong>{producto.name}</strong>
-                        {producto.description && <small className="inventory-description">{producto.description}</small>}
-                      </td>
-                      <td>{producto.stock_quantity} {producto.unit}</td>
-                      <td>{producto.min_stock} {producto.unit}</td>
-                      <td>{moneda(producto.unit_price)}</td>
-                      <td><span className={`status-badge ${estado.clase}`}>{estado.texto}</span></td>
-                      <td>
-                        <div className="inventory-actions">
-                          <button className="refresh-button" onClick={() => abrirEdicion(producto)} aria-label={`Editar ${producto.name}`}>
-                            <Edit3 size={15} />
-                          </button>
-                          <button className="refresh-button" onClick={() => cambiarEstado(producto)} aria-label={producto.is_active ? "Desactivar producto" : "Reactivar producto"}>
-                            {producto.is_active ? <Archive size={15} /> : <PackagePlus size={15} />}
-                          </button>
-                        </div>
-                      </td>
+              ) : gruposInventario.length > 0 ? (
+                gruposInventario.map((grupo, index) => (
+                  <React.Fragment key={grupo.key}>
+                    <tr className="driver-group-row inventory-group-row">
+                      <td colSpan="7">{grupo.label}<span>{grupo.items.length}</span></td>
                     </tr>
-                  );
-                })
+                    {grupo.items.map((producto) => {
+                      const estado = estadoStock(producto);
+                      return (
+                        <tr key={producto.id}>
+                          <td className="tracking-number">{producto.sku}</td>
+                          <td><strong>{producto.name}</strong>{producto.description && <small className="inventory-description">{producto.description}</small>}</td>
+                          <td>{producto.stock_quantity} {producto.unit}</td>
+                          <td>{producto.min_stock} {producto.unit}</td>
+                          <td>{moneda(producto.unit_price)}</td>
+                          <td><span className={`status-badge ${estado.clase}`}>{estado.texto}</span></td>
+                          <td>
+                            <div className="inventory-actions">
+                              <button className="refresh-button" onClick={() => abrirEdicion(producto)} aria-label={`Editar ${producto.name}`}><Edit3 size={15} /></button>
+                              <button className="refresh-button" onClick={() => cambiarEstado(producto)} aria-label={producto.is_active ? "Desactivar producto" : "Reactivar producto"}>{producto.is_active ? <Archive size={15} /> : <PackagePlus size={15} />}</button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </React.Fragment>
+                ))
               ) : (
-                <tr><td colSpan="7" className="empty-table">No hay productos para mostrar. Agrega el primero al inventario.</td></tr>
+                <tr><td colSpan="7" className="empty-table">No hay productos para mostrar con estos filtros.</td></tr>
               )}
             </tbody>
           </table>
