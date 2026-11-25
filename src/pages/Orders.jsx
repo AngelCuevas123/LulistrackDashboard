@@ -188,6 +188,43 @@ function Orders() {
     return coincideTexto && coincideEstado;
   });
 
+  // Agrupar únicamente con created_at enviado por el backend.
+  // Los registros antiguos sin fecha confiable permanecen identificados como tales.
+  const gruposPedidos = (() => {
+    const grupos = new Map();
+    pedidosFiltrados.forEach((order) => {
+      const fecha = order.created_at ? new Date(order.created_at) : null;
+      const clave = fecha && !Number.isNaN(fecha.getTime())
+        ? fecha.toLocaleDateString("en-CA")
+        : "sin-fecha";
+      if (!grupos.has(clave)) grupos.set(clave, []);
+      grupos.get(clave).push(order);
+    });
+    return [...grupos.entries()].sort(([a], [b]) => {
+      if (a === "sin-fecha") return 1;
+      if (b === "sin-fecha") return -1;
+      return b.localeCompare(a);
+    });
+  })();
+
+  const etiquetaDia = (clave) => {
+    if (clave === "sin-fecha") return "Fecha no registrada";
+    const [year, month, day] = clave.split("-").map(Number);
+    const fecha = new Date(year, month - 1, day);
+    const hoy = new Date();
+    const ayer = new Date();
+    ayer.setDate(hoy.getDate() - 1);
+    const mismaFecha = (a, b) => a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+    if (mismaFecha(fecha, hoy)) return "Hoy";
+    if (mismaFecha(fecha, ayer)) return "Ayer";
+    return fecha.toLocaleDateString("es-MX", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric"
+    });
+  };
+
+
+
   return (
     <div className="orders-page">
 
@@ -274,59 +311,64 @@ function Orders() {
           </select>
         </div>
 
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Seguimiento</th>
-                <th>Cliente</th>
-                <th>Direccion</th>
-                <th>Productos</th>
-                <th>Estado</th>
-                <th>Entrega estimada</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {cargando ? (
-                <tr>
-                  <td colSpan="6" className="empty-table">
-                    Cargando pedidos...
-                  </td>
-                </tr>
-              ) : pedidosFiltrados.length > 0 ? (
-                pedidosFiltrados.map((order) => (
-                  <tr key={order.id}>
-                    <td className="tracking-number">
-                      {order.tracking_number}
-                    </td>
-
-                    <td>{order.client_name}</td>
-
-                    <td>{order.address}</td>
-
-                    <td className="order-items-summary" title={(order.items || []).map((item) => `${item.product_name} × ${item.quantity}`).join(", ")}>
-                      {order.items?.length ? `${order.items.length} artículo(s)` : "Sin detalle"}
-                    </td>
-
-                    <td>
-                      <span className={`status-badge ${order.status}`}>
-                        {(order.status || "sin estado").replaceAll("_", " ")}
-                      </span>
-                    </td>
-
-                    <td>{order.estimated_time || "Sin definir"}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" className="empty-table">
-                    No se encontraron pedidos.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        <div className="orders-day-groups">
+          {cargando ? (
+            <div className="empty-table">Cargando pedidos...</div>
+          ) : gruposPedidos.length > 0 ? (
+            gruposPedidos.map(([dia, pedidosDelDia], index) => {
+              const pendientesDia = pedidosDelDia.filter((pedido) => pedido.status === "pendiente").length;
+              const transitoDia = pedidosDelDia.filter((pedido) => pedido.status === "en_transito").length;
+              const entregadosDia = pedidosDelDia.filter((pedido) => pedido.status === "entregado").length;
+              return (
+                <details className="day-accordion" key={dia} open={index === 0}>
+                  <summary className="day-accordion-summary">
+                    <span className="day-accordion-date">
+                      <strong>{etiquetaDia(dia)}</strong>
+                      <small>{pedidosDelDia.length} {pedidosDelDia.length === 1 ? "pedido" : "pedidos"}</small>
+                    </span>
+                    <span className="day-accordion-counts">
+                      <span className="day-count pending">{pendientesDia} pendientes</span>
+                      <span className="day-count transit">{transitoDia} en ruta</span>
+                      <span className="day-count delivered">{entregadosDia} entregados</span>
+                    </span>
+                    <span className="day-accordion-chevron">⌄</span>
+                  </summary>
+                  <div className="table-container">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Seguimiento</th>
+                          <th>Cliente</th>
+                          <th>Dirección</th>
+                          <th>Productos</th>
+                          <th>Estado</th>
+                          <th>Entrega estimada</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pedidosDelDia.map((order) => (
+                          <tr key={order.id}>
+                            <td className="tracking-number">{order.tracking_number || "Sin número"}</td>
+                            <td>{order.client_name || "Sin cliente"}</td>
+                            <td>{order.address || "Sin dirección"}</td>
+                            <td className="order-items-summary" title={(order.items || []).map((item) => `${item.product_name} × ${item.quantity}`).join(", ")}>
+                              {order.items?.length ? `${order.items.length} artículo(s)` : "Sin detalle"}
+                            </td>
+                            <td><span className={`status-badge ${order.status}`}>{(order.status || "sin estado").replaceAll("_", " ")}</span></td>
+                            <td>{order.estimated_time || "Sin definir"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </details>
+              );
+            })
+          ) : (
+            <div className="empty-table">
+              {orders.length === 0 ? "Todavía no hay pedidos registrados." : "No se encontraron pedidos con esos filtros."}
+            </div>
+          )}
         </div>
 
         <div className="orders-footer">
