@@ -281,6 +281,7 @@ function Orders() {
                 <th>Seguimiento</th>
                 <th>Cliente</th>
                 <th>Direccion</th>
+                <th>Productos</th>
                 <th>Estado</th>
                 <th>Entrega estimada</th>
               </tr>
@@ -289,7 +290,7 @@ function Orders() {
             <tbody>
               {cargando ? (
                 <tr>
-                  <td colSpan="5" className="empty-table">
+                  <td colSpan="6" className="empty-table">
                     Cargando pedidos...
                   </td>
                 </tr>
@@ -303,6 +304,10 @@ function Orders() {
                     <td>{order.client_name}</td>
 
                     <td>{order.address}</td>
+
+                    <td className="order-items-summary" title={(order.items || []).map((item) => `${item.product_name} × ${item.quantity}`).join(", ")}>
+                      {order.items?.length ? `${order.items.length} artículo(s)` : "Sin detalle"}
+                    </td>
 
                     <td>
                       <span className={`status-badge ${order.status}`}>
