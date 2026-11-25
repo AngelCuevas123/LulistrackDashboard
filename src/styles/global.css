@@ -3456,3 +3456,14 @@ a {
     flex: 1;
   }
 }
+
+.order-items-summary {
+  min-width: 90px;
+  color: #667085;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.inventory-page .table-container td {
+  vertical-align: middle;
+}
