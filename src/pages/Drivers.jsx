@@ -295,7 +295,7 @@ function Drivers() {
             </thead>
 
             <tbody>
-              <tr className="driver-group-row"><td colSpan="6">En ruta <span>${repartidoresEnRuta.length}</span></td></tr>
+              <tr className="driver-group-row"><td colSpan="6">En ruta <span>{repartidoresEnRuta.length}</span></td></tr>
               {repartidoresEnRuta.length > 0 ? repartidoresEnRuta.map((driver) => (
                 <tr key={driver.driver_id}>
                   <td className="tracking-number">{driver.driver_id}</td>
