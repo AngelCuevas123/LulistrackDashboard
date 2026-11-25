@@ -3254,3 +3254,122 @@ a {
 @media (max-width: 600px) {
   .public-tracking-map iframe { height: 260px; }
 }
+
+
+/* ===== INVENTARIO Y VALIDACION DE PEDIDOS ===== */
+.inventory-stats {
+  margin: 18px 0 22px;
+}
+
+.inventory-description {
+  display: block;
+  max-width: 260px;
+  margin-top: 4px;
+  color: #8993a4;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.inventory-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.inventory-actions .refresh-button {
+  justify-content: center;
+  min-width: 36px;
+  padding: 9px;
+}
+
+.inventory-inactive-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 16px;
+  color: #667085;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.inventory-inactive-toggle input {
+  accent-color: #213a81;
+}
+
+.inventory-order-products {
+  padding: 16px;
+  border: 1px solid #e7ebf2;
+  border-radius: 12px;
+  background: #fbfcfe;
+}
+
+.inventory-order-products .orders-toolbar {
+  margin-bottom: 12px;
+}
+
+.inventory-order-item {
+  align-items: flex-end;
+  padding-top: 12px;
+  border-top: 1px solid #edf0f5;
+}
+
+.inventory-order-item .form-group {
+  margin-bottom: 10px;
+}
+
+.inventory-order-item .cancel-button {
+  flex-shrink: 0;
+  margin-bottom: 10px;
+  padding: 11px;
+}
+
+.inventory-dashboard-card {
+  margin-bottom: 22px;
+}
+
+.inventory-dashboard-list {
+  display: grid;
+  gap: 4px;
+}
+
+.inventory-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inventory-alert svg {
+  flex-shrink: 0;
+}
+
+.form-group select {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 43px;
+  padding: 11px 12px;
+  border: 1px solid #e0e6ef;
+  border-radius: 9px;
+  outline: none;
+  background: #fff;
+  color: #344054;
+  font: inherit;
+}
+
+.form-group select:focus {
+  border-color: #213a81;
+}
+
+@media (max-width: 600px) {
+  .inventory-order-item {
+    align-items: stretch;
+  }
+
+  .inventory-order-item .cancel-button {
+    align-self: flex-end;
+    margin-top: -4px;
+  }
+
+  .inventory-alert {
+    align-items: flex-start;
+  }
+}
