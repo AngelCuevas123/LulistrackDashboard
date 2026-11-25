@@ -302,6 +302,36 @@ function Dashboard() {
 
           </div>
 
+          <div className="dashboard-status-chart">
+            <div className="status-chart-heading">
+              <strong>Distribución de pedidos</strong>
+              <span>{totalPedidos} en total</span>
+            </div>
+            {[
+              { label: "Entregados", value: entregados, color: "green" },
+              { label: "En tránsito", value: enTransito, color: "blue" },
+              { label: "Pendientes", value: pendientes, color: "yellow" }
+            ].map((estado) => {
+              const porcentajeEstado = totalPedidos > 0
+                ? Math.round((estado.value / totalPedidos) * 100)
+                : 0;
+              return (
+                <div className="status-chart-row" key={estado.label}>
+                  <div className="status-chart-label">
+                    <span>{estado.label}</span>
+                    <strong>{estado.value} · {porcentajeEstado}%</strong>
+                  </div>
+                  <div className="status-chart-track">
+                    <div
+                      className={`status-chart-fill ${estado.color}`}
+                      style={{ width: `${porcentajeEstado}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
         </div>
 
       </div>
