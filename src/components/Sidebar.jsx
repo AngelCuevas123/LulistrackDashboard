@@ -7,7 +7,8 @@ import {
   Settings,
   LogOut,
   Box,
-  ClipboardList
+  ClipboardList,
+  Warehouse
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
@@ -51,6 +52,13 @@ function Sidebar({ onLogout }) {
           }>
             <Truck size={19} />
             <span>Repartidores</span>
+          </NavLink>
+
+          <NavLink to="/inventory" className={({ isActive }) =>
+            isActive ? "nav-item active" : "nav-item"
+          }>
+            <Warehouse size={19} />
+            <span>Inventario</span>
           </NavLink>
 
           <NavLink to="/tracking" className={({ isActive }) =>
