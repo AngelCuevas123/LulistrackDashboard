@@ -3467,3 +3467,450 @@ a {
 .inventory-page .table-container td {
   vertical-align: middle;
 }
+
+
+/* ===== LULISTRACK GLASSY DASHBOARD V24 =====
+   Mantiene la paleta original: navy, sky, fuchsia y yellow.
+   El seguimiento público conserva su hoja de estilos original.
+*/
+.app-container {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 12% 8%, rgba(183, 231, 252, .48), transparent 34%),
+    radial-gradient(ellipse at 88% 18%, rgba(186, 64, 120, .10), transparent 30%),
+    linear-gradient(135deg, #edf3fc 0%, #f5f7fc 48%, #eaf1fa 100%);
+}
+
+.app-container::before,
+.app-container::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  filter: blur(85px);
+  pointer-events: none;
+  opacity: .34;
+}
+
+.app-container::before {
+  top: 8%;
+  right: 7%;
+  background: rgba(183, 231, 252, .8);
+}
+
+.app-container::after {
+  bottom: 2%;
+  left: 20%;
+  background: rgba(186, 64, 120, .16);
+}
+
+.app-container .sidebar {
+  background: linear-gradient(165deg, rgba(33, 58, 129, .97), rgba(25, 48, 111, .94));
+  border-right: 1px solid rgba(255, 255, 255, .16);
+  box-shadow: 12px 0 38px rgba(33, 58, 129, .12);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+.app-container .nav-item {
+  border: 1px solid transparent;
+  border-radius: 13px;
+  transition: background .22s ease, transform .22s ease, border-color .22s ease;
+}
+
+.app-container .nav-item:hover {
+  transform: translateX(3px);
+  background: rgba(255, 255, 255, .12);
+  border-color: rgba(255, 255, 255, .13);
+}
+
+.app-container .nav-item.active {
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 8px 22px rgba(10, 24, 67, .18);
+}
+
+.app-container .header {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, .64);
+  border-bottom: 1px solid rgba(255, 255, 255, .76);
+  box-shadow: 0 8px 28px rgba(33, 58, 129, .045);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+.app-container .page-content {
+  min-height: calc(100vh - 82px);
+  background: transparent;
+}
+
+.app-container .dashboard-heading h1,
+.app-container .orders-page .dashboard-heading h1,
+.app-container .history-page .dashboard-heading h1 {
+  color: #213a81;
+  letter-spacing: -1.2px;
+  font-weight: 800;
+}
+
+.app-container .dashboard-heading p {
+  color: #71809b;
+}
+
+.app-container .dashboard-date,
+.app-container .dashboard-refresh,
+.app-container .refresh-button,
+.app-container .orders-search,
+.app-container .orders-status-filter select {
+  border: 1px solid rgba(255, 255, 255, .86);
+  background: rgba(255, 255, 255, .58);
+  box-shadow: 0 5px 18px rgba(33, 58, 129, .045);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.app-container .stats-grid .stat-card,
+.app-container .performance-card,
+.app-container .activity-card,
+.app-container .orders-card,
+.app-container .orders-summary,
+.app-container .history-summary,
+.app-container .history-day-groups,
+.app-container .orders-page > .orders-card {
+  border: 1px solid rgba(255, 255, 255, .88);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, .62);
+  box-shadow:
+    0 14px 38px rgba(33, 58, 129, .075),
+    inset 0 1px 0 rgba(255, 255, 255, .9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.app-container .stats-grid .stat-card,
+.app-container .performance-card,
+.app-container .activity-card,
+.app-container .orders-card {
+  transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
+}
+
+.app-container .stats-grid .stat-card:hover,
+.app-container .activity-card:hover,
+.app-container .orders-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(183, 231, 252, .95);
+  box-shadow: 0 20px 44px rgba(33, 58, 129, .12);
+}
+
+.app-container .stat-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 174px;
+  padding: 22px 23px 19px;
+}
+
+.app-container .stat-card-top > span {
+  color: #61708b;
+  font-size: 11px;
+  letter-spacing: .01em;
+}
+
+.app-container .stat-card h2 {
+  margin: 18px 0 13px;
+  color: #213a81;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1.7px;
+}
+
+.app-container .stat-icon {
+  border: 1px solid rgba(255, 255, 255, .82);
+  border-radius: 13px;
+  box-shadow: 0 7px 16px rgba(33, 58, 129, .07);
+}
+
+.app-container .stat-card-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.app-container .stat-card-bottom p {
+  color: #8290a8;
+  font-size: 10px;
+}
+
+.app-container .stat-live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #16875a;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.app-container .stat-card-accent {
+  position: absolute;
+  right: 22px;
+  bottom: 0;
+  width: 58px;
+  height: 3px;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(90deg, #b7e7fc, #ba4078);
+}
+
+.app-container .performance-card {
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, .25);
+  background:
+    radial-gradient(circle at 90% 10%, rgba(183, 231, 252, .25), transparent 32%),
+    linear-gradient(135deg, #213a81 0%, #2d4c98 65%, #3759a5 100%);
+  box-shadow: 0 18px 42px rgba(33, 58, 129, .2);
+}
+
+.app-container .performance-card h3,
+.app-container .performance-card .performance-number,
+.app-container .performance-card .progress-labels strong {
+  color: #fff;
+}
+
+.app-container .performance-card .section-header p,
+.app-container .performance-card .performance-description,
+.app-container .performance-card .progress-labels {
+  color: rgba(255, 255, 255, .72);
+}
+
+.app-container .performance-card .progress-bar {
+  background: rgba(255, 255, 255, .2);
+}
+
+.app-container .performance-card .progress-fill {
+  background: linear-gradient(90deg, #b7e7fc, #ba4078);
+}
+
+.app-container .activity-card .section-header h3,
+.app-container .orders-card .section-header h3,
+.app-container .orders-toolbar h3 {
+  color: #213a81;
+}
+
+.app-container .activity-card .section-header p,
+.app-container .orders-card .section-header p,
+.app-container .orders-toolbar p {
+  color: #8794aa;
+}
+
+.app-container .orders-card th {
+  background: rgba(234, 242, 255, .62);
+  color: #71809b;
+}
+
+.app-container .orders-card td {
+  border-bottom-color: rgba(33, 58, 129, .07);
+}
+
+.app-container .orders-card tbody tr:hover:not(.driver-group-row) {
+  background: rgba(183, 231, 252, .13);
+}
+
+.app-container .orders-summary,
+.app-container .history-summary {
+  padding: 24px 26px;
+}
+
+.app-container .orders-summary h2,
+.app-container .history-summary h2 {
+  color: #213a81;
+}
+
+.app-container .primary-button {
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 13px;
+  background: linear-gradient(135deg, #213a81, #3455a0);
+  box-shadow: 0 9px 20px rgba(33, 58, 129, .18);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.app-container .primary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 13px 25px rgba(33, 58, 129, .24);
+  background: linear-gradient(135deg, #1c3478, #2c4a96);
+}
+
+.app-container .refresh-button {
+  border-radius: 11px;
+  color: #213a81;
+  transition: transform .2s ease, background .2s ease;
+}
+
+.app-container .refresh-button:hover {
+  transform: translateY(-1px);
+  background: rgba(183, 231, 252, .38);
+}
+
+.app-container .orders-search:focus-within {
+  border-color: rgba(57, 116, 217, .45);
+  box-shadow: 0 0 0 4px rgba(57, 116, 217, .08);
+}
+
+.app-container .orders-search input {
+  color: #25324b;
+}
+
+.app-container .orders-search input::placeholder {
+  color: #9aa6b8;
+}
+
+.app-container .day-accordion {
+  margin: 12px 0;
+  overflow: hidden;
+  border: 1px solid rgba(33, 58, 129, .09);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .46);
+}
+
+.app-container .day-accordion-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 17px 19px;
+  cursor: pointer;
+  list-style: none;
+  transition: background .2s ease;
+}
+
+.app-container .day-accordion-summary::-webkit-details-marker {
+  display: none;
+}
+
+.app-container .day-accordion-summary:hover {
+  background: rgba(183, 231, 252, .2);
+}
+
+.app-container .day-accordion-date {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 150px;
+}
+
+.app-container .day-accordion-date strong {
+  color: #213a81;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.app-container .day-accordion-date small {
+  color: #8996aa;
+  font-size: 10px;
+}
+
+.app-container .day-accordion-counts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.app-container .day-count {
+  padding: 5px 8px;
+  border-radius: 20px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.app-container .day-count.pending { background: #fff7df; color: #a87812; }
+.app-container .day-count.transit { background: #eaf2ff; color: #3974d9; }
+.app-container .day-count.delivered { background: #e5f7ee; color: #16875a; }
+
+.app-container .day-accordion-chevron {
+  color: #7e8ba2;
+  font-size: 20px;
+  transition: transform .2s ease;
+}
+
+.app-container .day-accordion[open] .day-accordion-chevron {
+  transform: rotate(180deg);
+}
+
+.app-container .day-accordion .table-container {
+  border-top: 1px solid rgba(33, 58, 129, .08);
+}
+
+.app-container .driver-group-row td {
+  padding: 12px 14px !important;
+  background: rgba(183, 231, 252, .24);
+  color: #213a81 !important;
+  font-size: 11px !important;
+  font-weight: 800;
+}
+
+.app-container .driver-group-row span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  margin-left: 8px;
+  border-radius: 20px;
+  background: rgba(33, 58, 129, .09);
+  color: #213a81;
+  font-size: 10px;
+}
+
+.app-container .inventory-group-row td {
+  background: rgba(186, 64, 120, .07);
+}
+
+.app-container .inventory-page .stat-card {
+  min-height: 150px;
+}
+
+.app-container .inventory-page .stat-card h2 {
+  margin-bottom: 8px;
+}
+
+.app-container .status-chart-track {
+  background: rgba(33, 58, 129, .08);
+}
+
+.app-container .orders-footer {
+  color: #8390a5;
+}
+
+@media (max-width: 760px) {
+  .app-container .day-accordion-summary {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .app-container .day-accordion-counts {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .app-container .day-accordion-chevron {
+    margin-left: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-container .stats-grid .stat-card,
+  .app-container .activity-card,
+  .app-container .orders-card,
+  .app-container .nav-item,
+  .app-container .primary-button {
+    transition: none;
+  }
+  .app-container .stats-grid .stat-card:hover,
+  .app-container .activity-card:hover,
+  .app-container .orders-card:hover {
+    transform: none;
+  }
+}
