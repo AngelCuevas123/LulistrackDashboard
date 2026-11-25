@@ -3373,3 +3373,86 @@ a {
     align-items: flex-start;
   }
 }
+
+.orders-status-filter {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: fit-content;
+  margin: -5px 0 20px auto;
+  color: #667085;
+  font-size: 12px;
+}
+
+.orders-status-filter select {
+  min-height: 38px;
+  padding: 8px 32px 8px 11px;
+  border: 1px solid #e0e6ef;
+  border-radius: 9px;
+  background: #fff;
+  color: #344054;
+  font: inherit;
+}
+
+.dashboard-status-chart {
+  display: grid;
+  gap: 13px;
+  margin-top: 19px;
+  padding-top: 16px;
+  border-top: 1px solid #edf0f5;
+}
+
+.status-chart-heading,
+.status-chart-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.status-chart-heading strong {
+  color: #344054;
+  font-size: 12px;
+}
+
+.status-chart-heading span,
+.status-chart-label span {
+  color: #8993a4;
+  font-size: 11px;
+}
+
+.status-chart-label strong {
+  color: #475467;
+  font-size: 11px;
+}
+
+.status-chart-track {
+  height: 7px;
+  margin-top: 7px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #eef1f6;
+}
+
+.status-chart-fill {
+  height: 100%;
+  min-width: 0;
+  border-radius: inherit;
+  transition: width .35s ease;
+}
+
+.status-chart-fill.green { background: #16a36a; }
+.status-chart-fill.blue { background: #3974d9; }
+.status-chart-fill.yellow { background: #e0aa35; }
+
+@media (max-width: 600px) {
+  .orders-status-filter {
+    width: 100%;
+    justify-content: flex-start;
+    margin: 0 0 18px;
+  }
+
+  .orders-status-filter select {
+    flex: 1;
+  }
+}
