@@ -205,3 +205,12 @@ export async function consultarSeguimientoPublico(numeroGuia) {
 
   return respuesta.json();
 }
+
+// Actualizar la prioridad de un pedido (solo administrador)
+export async function actualizarPrioridad(orderId, isPriority) {
+  return solicitar(`/orders/${encodeURIComponent(orderId)}/priority`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ is_priority: isPriority })
+  });
+}
