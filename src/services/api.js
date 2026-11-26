@@ -214,3 +214,19 @@ export async function actualizarPrioridad(orderId, isPriority) {
     body: JSON.stringify({ is_priority: isPriority })
   });
 }
+
+
+// Consultar localidades asociadas a un código postal mexicano
+export async function buscarCodigoPostal(codigoPostal) {
+  return solicitar(`/addresses/postal-codes/${encodeURIComponent(codigoPostal)}`);
+}
+
+// Buscar calles, caminos y asentamientos con contexto geográfico
+export async function buscarDirecciones({ q, postal_code, locality, municipality, state }) {
+  const params = new URLSearchParams({ q });
+  if (postal_code) params.set("postal_code", postal_code);
+  if (locality) params.set("locality", locality);
+  if (municipality) params.set("municipality", municipality);
+  if (state) params.set("state", state);
+  return solicitar(`/addresses/search?${params.toString()}`);
+}
