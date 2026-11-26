@@ -400,7 +400,7 @@ function Orders() {
                                 title={order.status === "entregado" ? "El pedido ya fue entregado" : "Cambiar prioridad"}
                               >
                                 <Flag size={14} />
-                                {order.is_priority ? "Prioritario" : "Normal"}
+                                {order.is_priority ? "Prioritario" : "No prioritario"}
                               </button>
                             </td>
                             <td><span className={`status-badge ${order.status}`}>{(order.status || "sin estado").replaceAll("_", " ")}</span></td>
