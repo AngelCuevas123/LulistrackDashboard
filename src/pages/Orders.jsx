@@ -47,6 +47,7 @@ function Orders() {
     estimated_time: "",
     latitude: "",
     longitude: "",
+    location_confirmed: false,
     is_priority: false
   });
 
@@ -143,8 +144,8 @@ function Orders() {
         }
       }
 
-      if (formulario.latitude === "" || formulario.longitude === "") {
-        setError("Selecciona el punto exacto de entrega en el mapa.");
+      if (formulario.latitude === "" || formulario.longitude === "" || !formulario.location_confirmed) {
+        setError("Confirma el punto exacto de entrega haciendo clic en el mapa o arrastrando el marcador.");
         return;
       }
 
@@ -503,11 +504,18 @@ function Orders() {
 
               <AddressAutocomplete
                 value={formulario}
-                onChange={(cambios) => setFormulario((actual) => ({ ...actual, ...cambios }))}
+                onChange={(cambios) => setFormulario((actual) => ({
+                  ...actual,
+                  ...cambios,
+                  ...(["postal_code", "locality", "municipality", "state", "street", "colony"].some((campo) => Object.prototype.hasOwnProperty.call(cambios, campo))
+                    ? { location_confirmed: false }
+                    : {})
+                }))}
                 onCoordinates={({ latitude, longitude }) => setFormulario((actual) => ({
                   ...actual,
                   latitude: String(latitude),
-                  longitude: String(longitude)
+                  longitude: String(longitude),
+                  location_confirmed: false
                 }))}
               />
 
