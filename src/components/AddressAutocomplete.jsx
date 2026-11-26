@@ -135,7 +135,20 @@ function AddressAutocomplete({ value, onChange, onCoordinates }) {
               inputMode="numeric"
               maxLength={5}
               value={value.postal_code || ""}
-              onChange={(event) => cambiar("postal_code", event.target.value.replace(/\D/g, "").slice(0, 5))}
+              onChange={(event) => onChange({
+                postal_code: event.target.value.replace(/\D/g, "").slice(0, 5),
+                state: "",
+                municipality: "",
+                locality: "",
+                colony: "",
+                street: "",
+                exterior_number: "",
+                interior_number: "",
+                address_references: "",
+                latitude: "",
+                longitude: "",
+                location_confirmed: false
+              })}
               placeholder="Ej. 36200"
               pattern="[0-9]{5}"
               title="Escribe un código postal de cinco dígitos"
