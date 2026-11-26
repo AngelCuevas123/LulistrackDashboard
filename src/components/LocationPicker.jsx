@@ -73,7 +73,11 @@ function LocationPicker({ latitude, longitude, onChange }) {
   useEffect(() => {
     const map = mapRef.current;
     const marker = markerRef.current;
-    if (!map || !marker || latitude === "" || longitude === "") return;
+    if (!map || !marker) return;
+    if (latitude === "" || longitude === "") {
+      if (marker.getElement().isConnected) marker.remove();
+      return;
+    }
 
     const point = [Number(longitude), Number(latitude)];
     marker.setLngLat(point);
