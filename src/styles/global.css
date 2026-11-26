@@ -4311,3 +4311,193 @@ a {
   background: rgba(22, 163, 106, .18);
   color: #7ce0b1;
 }
+
+
+/* Prioridad de pedidos y selector de ubicación en el formulario */
+.orders-priority-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 18px;
+  color: #667085;
+  font-size: 13px;
+}
+
+.orders-priority-filter select {
+  min-height: 38px;
+  padding: 0 34px 0 12px;
+  border: 1px solid #D0D5DD;
+  border-radius: 10px;
+  background: #fff;
+  color: #344054;
+  font: inherit;
+}
+
+.priority-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #D0D5DD;
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: #F8FAFC;
+  color: #475467;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.priority-toggle.is-priority {
+  border-color: #F3B7B7;
+  background: #FFF1F1;
+  color: #B42318;
+}
+
+.priority-toggle:disabled {
+  cursor: not-allowed;
+  opacity: .6;
+}
+
+.tracking-number-auto {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid #D6E4F0;
+  border-radius: 14px;
+  background: #F4F8FC;
+}
+
+.tracking-number-auto-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: #E4EFFA;
+  color: #213A81;
+}
+
+.tracking-number-auto strong {
+  display: block;
+  color: #213A81;
+  font-size: 13px;
+}
+
+.tracking-number-auto p,
+.form-help {
+  margin: 5px 0 0;
+  color: #667085;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.location-picker {
+  overflow: hidden;
+  border: 1px solid #D0D5DD;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.location-picker-map {
+  width: 100%;
+  height: 310px;
+}
+
+.location-picker-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 13px;
+  color: #667085;
+  font-size: 12px;
+  border-top: 1px solid #EAECF0;
+}
+
+.location-picker-hint span {
+  color: #213A81;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.location-picker-coordinates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 9px;
+  color: #667085;
+  font-size: 12px;
+}
+
+.location-picker-coordinates strong {
+  color: #344054;
+  font-variant-numeric: tabular-nums;
+}
+
+.priority-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+}
+
+.priority-checkbox input {
+  width: 17px;
+  height: 17px;
+  accent-color: #BA4078;
+}
+
+.priority-checkbox span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #344054;
+  font-weight: 650;
+}
+
+:root[data-theme="oscuro"] .orders-priority-filter,
+:root[data-theme="oscuro"] .location-picker-coordinates,
+:root[data-theme="oscuro"] .tracking-number-auto p,
+:root[data-theme="oscuro"] .form-help {
+  color: #AAB6C8;
+}
+
+:root[data-theme="oscuro"] .orders-priority-filter select {
+  border-color: #34445B;
+  background: #172338;
+  color: #E7EDF6;
+}
+
+:root[data-theme="oscuro"] .priority-toggle {
+  border-color: #34445B;
+  background: #1B2A40;
+  color: #D8E1EF;
+}
+
+:root[data-theme="oscuro"] .priority-toggle.is-priority {
+  border-color: #8E3E49;
+  background: #3B2028;
+  color: #FFB8B8;
+}
+
+:root[data-theme="oscuro"] .tracking-number-auto {
+  border-color: #34445B;
+  background: #172338;
+}
+
+:root[data-theme="oscuro"] .tracking-number-auto-icon {
+  background: #253B5D;
+  color: #B7E7FC;
+}
+
+:root[data-theme="oscuro"] .tracking-number-auto strong,
+:root[data-theme="oscuro"] .location-picker-coordinates strong,
+:root[data-theme="oscuro"] .priority-checkbox span {
+  color: #E7EDF6;
+}
+
+:root[data-theme="oscuro"] .location-picker {
+  border-color: #34445B;
+  background: #172338;
+}
