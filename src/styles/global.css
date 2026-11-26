@@ -4501,3 +4501,26 @@ a {
   border-color: #34445B;
   background: #172338;
 }
+
+
+/* Captura nacional inteligente de direcciones */
+.address-autocomplete { display: grid; gap: 16px; margin: 8px 0 18px; }
+.address-section-heading { display: flex; align-items: flex-start; gap: 10px; color: var(--primary, #213A81); }
+.address-section-heading strong { display: block; color: var(--text-primary, inherit); }
+.address-section-heading p { margin: 3px 0 0; font-size: 12px; opacity: .72; }
+.address-fields-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.address-fields-grid .form-group { min-width: 0; margin: 0; }
+.address-fields-grid .address-street-field { grid-column: 1 / -1; position: relative; }
+.address-fields-grid .form-group small { display: block; margin-top: 5px; font-size: 11px; opacity: .7; }
+.address-input-with-status { position: relative; display: flex; align-items: center; gap: 8px; }
+.address-input-with-status > svg { flex: 0 0 auto; opacity: .65; }
+.address-input-with-status input { width: 100%; min-width: 0; }
+.address-spinner { animation: address-spin 1s linear infinite; }
+.address-feedback { color: #b45309 !important; opacity: 1 !important; }
+.address-suggestions { position: absolute; z-index: 30; top: calc(100% - 18px); left: 0; right: 0; max-height: 220px; overflow-y: auto; border: 1px solid var(--border-color, #dbe2ef); border-radius: 12px; background: var(--card-bg, #fff); box-shadow: 0 12px 30px rgba(20, 35, 70, .16); }
+.address-suggestions button { width: 100%; display: flex; align-items: flex-start; gap: 10px; padding: 11px 13px; border: 0; border-bottom: 1px solid var(--border-color, #edf0f5); text-align: left; background: transparent; color: inherit; cursor: pointer; }
+.address-suggestions button:hover { background: rgba(33, 58, 129, .07); }
+.address-suggestions button span { display: grid; gap: 3px; }
+.address-suggestions button small { font-size: 11px; opacity: .7; }
+@keyframes address-spin { to { transform: rotate(360deg); } }
+@media (max-width: 640px) { .address-fields-grid { grid-template-columns: 1fr; } .address-fields-grid .address-street-field { grid-column: auto; } }
