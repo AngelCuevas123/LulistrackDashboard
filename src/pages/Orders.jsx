@@ -7,7 +7,6 @@ import {
   Package,
   RefreshCw,
   X,
-  MapPin,
   Clock,
   User,
   Hash,
@@ -17,6 +16,7 @@ import {
 
 import { obtenerPedidos, crearPedido, obtenerProductos, actualizarPrioridad } from "../services/api";
 import LocationPicker from "../components/LocationPicker";
+import AddressAutocomplete from "../components/AddressAutocomplete";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
@@ -36,6 +36,14 @@ function Orders() {
     client_name: "",
     address: "",
     colony: "",
+    postal_code: "",
+    state: "",
+    municipality: "",
+    locality: "",
+    street: "",
+    exterior_number: "",
+    interior_number: "",
+    address_references: "",
     estimated_time: "",
     latitude: "",
     longitude: "",
@@ -142,8 +150,20 @@ function Orders() {
 
       const datos = {
         client_name: formulario.client_name,
-        address: formulario.address,
-        colony: formulario.colony,
+        address: [
+          formulario.street,
+          formulario.exterior_number ? `No. ${formulario.exterior_number}` : "",
+          formulario.interior_number ? `Int. ${formulario.interior_number}` : ""
+        ].filter(Boolean).join(" ") || [formulario.colony, formulario.locality, formulario.municipality, formulario.state].filter(Boolean).join(", "),
+        colony: formulario.colony || formulario.locality || formulario.municipality || "Sin asentamiento",
+        postal_code: formulario.postal_code || null,
+        state: formulario.state || null,
+        municipality: formulario.municipality || null,
+        locality: formulario.locality || null,
+        street: formulario.street || null,
+        exterior_number: formulario.exterior_number || null,
+        interior_number: formulario.interior_number || null,
+        address_references: formulario.address_references || null,
         estimated_time: formulario.estimated_time,
         is_priority: formulario.is_priority,
         latitude: formulario.latitude === ""
@@ -166,6 +186,14 @@ function Orders() {
         client_name: "",
         address: "",
         colony: "",
+        postal_code: "",
+        state: "",
+        municipality: "",
+        locality: "",
+        street: "",
+        exterior_number: "",
+        interior_number: "",
+        address_references: "",
         estimated_time: "",
         latitude: "",
         longitude: "",
@@ -470,30 +498,15 @@ function Orders() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label>Direccion de entrega</label>
-                <div className="form-input">
-                  <MapPin size={18} />
-                  <input
-                    name="address"
-                    value={formulario.address}
-                    onChange={manejarCambio}
-                    placeholder="Calle y numero"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Colonia</label>
-                <input
-                  name="colony"
-                  value={formulario.colony}
-                  onChange={manejarCambio}
-                  placeholder="Nombre de la colonia"
-                  required
-                />
-              </div>
+              <AddressAutocomplete
+                value={formulario}
+                onChange={(cambios) => setFormulario((actual) => ({ ...actual, ...cambios }))}
+                onCoordinates={({ latitude, longitude }) => setFormulario((actual) => ({
+                  ...actual,
+                  latitude: String(latitude),
+                  longitude: String(longitude)
+                }))}
+              />
 
               <div className="form-group">
                 <label>Hora estimada de entrega</label>
