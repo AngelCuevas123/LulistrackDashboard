@@ -64,10 +64,10 @@ function AddressAutocomplete({ value, onChange, onCoordinates }) {
       return;
     }
 
-    if (query === consultaAnterior.current) return;
-    const controller = new AbortController();
+    const searchKey = [query, value.postal_code, value.locality, value.municipality, value.state].join("|");
+    if (searchKey === consultaAnterior.current) return;
     const timer = setTimeout(() => {
-      consultaAnterior.current = query;
+      consultaAnterior.current = searchKey;
       setBuscandoCalle(true);
       setErrorCalle("");
       buscarDirecciones({
@@ -87,7 +87,6 @@ function AddressAutocomplete({ value, onChange, onCoordinates }) {
 
     return () => {
       clearTimeout(timer);
-      controller.abort();
     };
   }, [consultaCalle, value.postal_code, value.locality, value.municipality, value.state]);
 
@@ -138,6 +137,8 @@ function AddressAutocomplete({ value, onChange, onCoordinates }) {
               value={value.postal_code || ""}
               onChange={(event) => cambiar("postal_code", event.target.value.replace(/\D/g, "").slice(0, 5))}
               placeholder="Ej. 36200"
+              pattern="[0-9]{5}"
+              title="Escribe un código postal de cinco dígitos"
               required
             />
             {cargandoCP && <LoaderCircle className="address-spinner" size={17} />}
