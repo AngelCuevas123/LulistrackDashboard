@@ -151,10 +151,13 @@ function Orders() {
       const datos = {
         client_name: formulario.client_name,
         address: [
-          formulario.street,
-          formulario.exterior_number ? `No. ${formulario.exterior_number}` : "",
-          formulario.interior_number ? `Int. ${formulario.interior_number}` : ""
-        ].filter(Boolean).join(" ") || [formulario.colony, formulario.locality, formulario.municipality, formulario.state].filter(Boolean).join(", "),
+          [formulario.street, formulario.exterior_number ? `No. ${formulario.exterior_number}` : "", formulario.interior_number ? `Int. ${formulario.interior_number}` : ""].filter(Boolean).join(" "),
+          formulario.colony,
+          formulario.locality,
+          formulario.municipality,
+          formulario.state,
+          formulario.postal_code ? `C.P. ${formulario.postal_code}` : ""
+        ].filter(Boolean).join(", "),
         colony: formulario.colony || formulario.locality || formulario.municipality || "Sin asentamiento",
         postal_code: formulario.postal_code || null,
         state: formulario.state || null,
