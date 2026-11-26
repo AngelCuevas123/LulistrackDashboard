@@ -201,6 +201,7 @@ function Orders() {
         estimated_time: "",
         latitude: "",
         longitude: "",
+        location_confirmed: false,
         is_priority: false
       });
 
@@ -542,7 +543,8 @@ function Orders() {
                   onChange={({ latitude, longitude }) => setFormulario((actual) => ({
                     ...actual,
                     latitude: String(latitude),
-                    longitude: String(longitude)
+                    longitude: String(longitude),
+                    location_confirmed: true
                   }))}
                 />
                 <div className="location-picker-coordinates">
