@@ -11,15 +11,18 @@ import {
   Clock,
   User,
   Hash,
-  ListFilter
+  ListFilter,
+  Flag
 } from "lucide-react";
 
-import { obtenerPedidos, crearPedido, obtenerProductos } from "../services/api";
+import { obtenerPedidos, crearPedido, obtenerProductos, actualizarPrioridad } from "../services/api";
+import LocationPicker from "../components/LocationPicker";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [filtroEstado, setFiltroEstado] = useState("todos");
+  const [filtroPrioridad, setFiltroPrioridad] = useState("todos");
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -30,13 +33,13 @@ function Orders() {
   const [cargandoProductos, setCargandoProductos] = useState(false);
 
   const [formulario, setFormulario] = useState({
-    tracking_number: "",
     client_name: "",
     address: "",
     colony: "",
     estimated_time: "",
     latitude: "",
-    longitude: ""
+    longitude: "",
+    is_priority: false
   });
 
   // Consultar pedidos del backend
@@ -132,12 +135,17 @@ function Orders() {
         }
       }
 
+      if (formulario.latitude === "" || formulario.longitude === "") {
+        setError("Selecciona el punto exacto de entrega en el mapa.");
+        return;
+      }
+
       const datos = {
-        tracking_number: formulario.tracking_number,
         client_name: formulario.client_name,
         address: formulario.address,
         colony: formulario.colony,
         estimated_time: formulario.estimated_time,
+        is_priority: formulario.is_priority,
         latitude: formulario.latitude === ""
           ? null
           : Number(formulario.latitude),
@@ -150,18 +158,18 @@ function Orders() {
         }))
       };
 
-      await crearPedido(datos);
+      const pedidoCreado = await crearPedido(datos);
 
-      setMensaje("Pedido registrado correctamente.");
+      setMensaje(`Pedido ${pedidoCreado.tracking_number} registrado correctamente.`);
 
       setFormulario({
-        tracking_number: "",
         client_name: "",
         address: "",
         colony: "",
         estimated_time: "",
         latitude: "",
-        longitude: ""
+        longitude: "",
+        is_priority: false
       });
 
       setMostrarFormulario(false);
@@ -185,8 +193,22 @@ function Orders() {
       (order.address || "").toLowerCase().includes(texto)
     );
     const coincideEstado = filtroEstado === "todos" || order.status === filtroEstado;
-    return coincideTexto && coincideEstado;
+    const coincidePrioridad = filtroPrioridad === "todos" ||
+      (filtroPrioridad === "prioritarios" ? Boolean(order.is_priority) : !order.is_priority);
+    return coincideTexto && coincideEstado && coincidePrioridad;
   });
+
+  async function cambiarPrioridad(order) {
+    try {
+      setError("");
+      const actualizado = await actualizarPrioridad(order.id, !order.is_priority);
+      setOrders((actuales) => actuales.map((actual) =>
+        actual.id === actualizado.id ? actualizado : actual
+      ));
+    } catch (err) {
+      setError(err.message || "No se pudo actualizar la prioridad del pedido.");
+    }
+  }
 
   // Agrupar únicamente con created_at enviado por el backend.
   // Los registros antiguos sin fecha confiable permanecen identificados como tales.
@@ -311,6 +333,20 @@ function Orders() {
           </select>
         </div>
 
+        <div className="orders-priority-filter">
+          <Flag size={17} />
+          <label htmlFor="filtro-prioridad-pedidos">Prioridad</label>
+          <select
+            id="filtro-prioridad-pedidos"
+            value={filtroPrioridad}
+            onChange={(e) => setFiltroPrioridad(e.target.value)}
+          >
+            <option value="todos">Todas las prioridades</option>
+            <option value="prioritarios">Prioritarios</option>
+            <option value="no-prioritarios">No prioritarios</option>
+          </select>
+        </div>
+
         <div className="orders-day-groups">
           {cargando ? (
             <div className="empty-table">Cargando pedidos...</div>
@@ -341,6 +377,7 @@ function Orders() {
                           <th>Cliente</th>
                           <th>Dirección</th>
                           <th>Productos</th>
+                          <th>Prioridad</th>
                           <th>Estado</th>
                           <th>Entrega estimada</th>
                         </tr>
@@ -353,6 +390,18 @@ function Orders() {
                             <td>{order.address || "Sin dirección"}</td>
                             <td className="order-items-summary" title={(order.items || []).map((item) => `${item.product_name} × ${item.quantity}`).join(", ")}>
                               {order.items?.length ? `${order.items.length} artículo(s)` : "Sin detalle"}
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className={`priority-toggle ${order.is_priority ? "is-priority" : ""}`}
+                                onClick={() => cambiarPrioridad(order)}
+                                disabled={order.status === "entregado"}
+                                title={order.status === "entregado" ? "El pedido ya fue entregado" : "Cambiar prioridad"}
+                              >
+                                <Flag size={14} />
+                                {order.is_priority ? "Prioritario" : "Normal"}
+                              </button>
                             </td>
                             <td><span className={`status-badge ${order.status}`}>{(order.status || "sin estado").replaceAll("_", " ")}</span></td>
                             <td>{order.estimated_time || "Sin definir"}</td>
@@ -399,17 +448,11 @@ function Orders() {
 
             <form onSubmit={manejarRegistro}>
 
-              <div className="form-group">
-                <label>Numero de seguimiento</label>
-                <div className="form-input">
-                  <Hash size={18} />
-                  <input
-                    name="tracking_number"
-                    value={formulario.tracking_number}
-                    onChange={manejarCambio}
-                    placeholder="LUL-2026-004"
-                    required
-                  />
+              <div className="tracking-number-auto">
+                <div className="tracking-number-auto-icon"><Hash size={18} /></div>
+                <div>
+                  <strong>Folio de seguimiento automático</strong>
+                  <p>Se generará al registrar el pedido. No necesitas capturarlo.</p>
                 </div>
               </div>
 
@@ -466,30 +509,37 @@ function Orders() {
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Latitud (opcional)</label>
-                  <input
-                    type="number"
-                    step="any"
-                    name="latitude"
-                    value={formulario.latitude}
-                    onChange={manejarCambio}
-                    placeholder="20.0000"
-                  />
+              <div className="form-group location-picker-group">
+                <label>Ubicación exacta de entrega</label>
+                <p className="form-help">Haz clic en el mapa para colocar el marcador. Puedes arrastrarlo para ajustar el punto.</p>
+                <LocationPicker
+                  latitude={formulario.latitude}
+                  longitude={formulario.longitude}
+                  onChange={({ latitude, longitude }) => setFormulario((actual) => ({
+                    ...actual,
+                    latitude: String(latitude),
+                    longitude: String(longitude)
+                  }))}
+                />
+                <div className="location-picker-coordinates">
+                  <span>Latitud: <strong>{formulario.latitude || "Pendiente"}</strong></span>
+                  <span>Longitud: <strong>{formulario.longitude || "Pendiente"}</strong></span>
                 </div>
+              </div>
 
-                <div className="form-group">
-                  <label>Longitud (opcional)</label>
+              <div className="form-group priority-form-group">
+                <label className="priority-checkbox">
                   <input
-                    type="number"
-                    step="any"
-                    name="longitude"
-                    value={formulario.longitude}
-                    onChange={manejarCambio}
-                    placeholder="-101.0000"
+                    type="checkbox"
+                    checked={formulario.is_priority}
+                    onChange={(e) => setFormulario((actual) => ({
+                      ...actual,
+                      is_priority: e.target.checked
+                    }))}
                   />
-                </div>
+                  <span><Flag size={16} /> Marcar este pedido como prioritario</span>
+                </label>
+                <p className="form-help">Los pedidos prioritarios se identificarán en el listado para darles atención preferente.</p>
               </div>
 
               <div className="form-group inventory-order-products">
